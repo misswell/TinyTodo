@@ -4,6 +4,22 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] — 2026-11-17
+
+### Added
+
+- iCloud Drive storage (Settings › 数据 › 使用 iCloud Drive…): pick a folder in iCloud Drive and the
+  SQLite database lives there as a single file (`journal_mode=DELETE`, `synchronous=FULL`), so
+  iCloud replicates it to other Macs. Switching copies data with a conflict choice, keeps a local
+  backup when switching back, and asks to restart.
+- Menu bar badge now shows the number of unfinished todos (instead of today's completions);
+  the menu still lists both remaining and today's completed counts. Toggle in Settings.
+
+### Changed
+
+- 111 unit/integration tests (storage location/migration, iCloud journal mode, badge text).
+- Version 1.2.0 (build 5).
+
 ## [1.1.0] — 2026-11-17
 
 ### Added

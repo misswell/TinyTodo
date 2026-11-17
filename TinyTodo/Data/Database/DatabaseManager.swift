@@ -5,7 +5,8 @@ import os
 /// Owns the SQLite file, its configuration and the schema version.
 ///
 /// Storage location:
-/// `~/Library/Application Support/TinyTodo/TinyTodo.sqlite` (+ `-wal`, `-shm`).
+/// - local: `~/Library/Application Support/TinyTodo/TinyTodo.sqlite` (+ `-wal`, `-shm`)
+/// - iCloud: a user-selected iCloud Drive folder, single-file journal so iCloud replicates one file.
 final class DatabaseManager {
     enum DatabaseManagerError: LocalizedError {
         case cannotCreateDirectory(URL, Error)
@@ -20,6 +21,7 @@ final class DatabaseManager {
 
     let directoryURL: URL
     let fileURL: URL
+    let storageMode: StorageMode
     let dbQueue: DatabaseQueue
     private let logger = Logger(subsystem: AppInfo.subsystem, category: "database")
 
@@ -29,18 +31,27 @@ final class DatabaseManager {
         return support.appendingPathComponent("TinyTodo", isDirectory: true)
     }
 
-    /// Production initializer: file-backed database in Application Support.
+    /// Production initializer: local Application Support, or the configured iCloud Drive folder.
     convenience init() throws {
         if let override = ProcessInfo.processInfo.environment["TINYTODO_DB_PATH"], !override.isEmpty {
             let url = URL(fileURLWithPath: override)
-            try self.init(directory: url.deletingLastPathComponent(), fileName: url.lastPathComponent)
+            try self.init(
+                directory: url.deletingLastPathComponent(),
+                fileName: url.lastPathComponent,
+                storageMode: .local
+            )
+        } else if let folder = StorageLocation.configuredICloudFolder(),
+                  StorageLocation.mode() == .iCloud,
+                  FileManager.default.fileExists(atPath: StorageLocation.iCloudDriveRoot.path) {
+            try self.init(directory: folder, storageMode: .iCloud)
         } else {
-            try self.init(directory: Self.defaultDirectoryURL)
+            try self.init(directory: Self.defaultDirectoryURL, storageMode: .local)
         }
     }
 
     /// File-backed database in an explicit directory (used by tests and the UI test harness).
-    init(directory: URL, fileName: String = "TinyTodo.sqlite") throws {
+    init(directory: URL, fileName: String = "TinyTodo.sqlite", storageMode: StorageMode? = nil) throws {
+        let mode = storageMode ?? (StorageLocation.isICloudPath(directory) ? .iCloud : .local)
         do {
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         } catch {
@@ -48,16 +59,18 @@ final class DatabaseManager {
         }
         self.directoryURL = directory
         self.fileURL = directory.appendingPathComponent(fileName)
+        self.storageMode = mode
 
         var configuration = Configuration()
         configuration.prepareDatabase { db in
-            try db.execute(sql: "PRAGMA journal_mode = WAL")
-            try db.execute(sql: "PRAGMA synchronous = NORMAL")
+            // iCloud replicates a single file; WAL's -wal/-shm sidecars do not survive that well.
+            try db.execute(sql: mode == .iCloud ? "PRAGMA journal_mode = DELETE" : "PRAGMA journal_mode = WAL")
+            try db.execute(sql: mode == .iCloud ? "PRAGMA synchronous = FULL" : "PRAGMA synchronous = NORMAL")
             try db.execute(sql: "PRAGMA busy_timeout = 5000")
         }
         self.dbQueue = try DatabaseQueue(path: fileURL.path, configuration: configuration)
         try DatabaseMigration.migrator.migrate(dbQueue)
-        logger.info("database ready at \(self.fileURL.path, privacy: .public)")
+        logger.info("database ready at \(self.fileURL.path, privacy: .public) mode=\(mode.rawValue, privacy: .public)")
     }
 
     /// In-memory database (unit tests).
@@ -65,6 +78,7 @@ final class DatabaseManager {
         precondition(inMemory)
         self.directoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         self.fileURL = self.directoryURL.appendingPathComponent("TinyTodo-memory.sqlite")
+        self.storageMode = .local
 
         let configuration = Configuration()
         self.dbQueue = try DatabaseQueue(configuration: configuration)
@@ -87,6 +101,23 @@ final class DatabaseManager {
         let formatter = ByteCountFormatter()
         formatter.countStyle = .file
         return formatter.string(fromByteCount: size)
+    }
+
+    var isUsingICloud: Bool { storageMode == .iCloud }
+
+    var storageDescription: String {
+        isUsingICloud ? "iCloud Drive · \(fileURL.deletingLastPathComponent().path)" : "本机 · \(fileURL.deletingLastPathComponent().path)"
+    }
+
+    /// Flushes WAL before the file is copied for a storage switch.
+    func checkpoint() {
+        do {
+            try dbQueue.writeWithoutTransaction { db in
+                try db.execute(sql: "PRAGMA wal_checkpoint(TRUNCATE)")
+            }
+        } catch {
+            logger.error("checkpoint failed: \(error.localizedDescription, privacy: .public)")
+        }
     }
 
     func vacuumIfNeeded() {

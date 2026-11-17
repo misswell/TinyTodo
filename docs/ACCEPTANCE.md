@@ -76,6 +76,15 @@
 | 42 | 自替换并重启 | ✅ | `Resources/update-helper.sh`（等待退出→备份→ditto→去 quarantine→直接启动）；离线 swap 测试通过 |
 | 43 | 非 /Applications 拒绝 | ✅ | `UpdateInstaller.canSelfUpdate` + `UpdateInstallerTests`；UI 提示手动下载 |
 
+## iCloud 与菜单栏
+
+| # | 项 | 状态 | 证据 |
+| --- | --- | --- | --- |
+| 45 | iCloud Drive 存储与读取 | ✅ | `StorageLocation`、`StorageMigration`；设置中选择文件夹后 SQLite 落在该目录（实测 `TinyTodo.sqlite` 生成于 iCloud Drive）；`StorageTests` |
+| 46 | 切换存储不丢数据 | ✅ | 切换复制 + 冲突选择；切回本机保留带时间戳备份；`StorageMigrationTests` |
+| 47 | iCloud 单文件写入 | ✅ | iCloud 模式 `journal_mode=DELETE`、`synchronous=FULL`；`DatabaseManagerStorageTests` |
+| 48 | 菜单栏显示剩余待办数 | ✅ | `MenuBarController.badgeText`；`MenuBarBadgeTests`；设置可关闭 |
+
 ## 发布与公证
 
 | # | 项 | 状态 | 证据 |

@@ -62,14 +62,21 @@ final class MenuBarController: NSObject {
         updateBadge()
     }
 
+    /// The badge is the number of unfinished todos, not today's completions.
+    static func badgeText(pendingCount: Int, enabled: Bool) -> String {
+        guard enabled, pendingCount > 0 else { return "" }
+        return " \(pendingCount)"
+    }
+
     private func updateBadge() {
         guard let button = statusItem.button else { return }
-        if settings.showMenuBarCount, todayCompleted > 0 {
-            button.title = " \(todayCompleted)"
-            button.font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium)
+        button.title = Self.badgeText(pendingCount: pendingCount, enabled: settings.showMenuBarCount)
+        if button.title.isEmpty {
+            button.toolTip = "TinyTodo · 点击展开待办"
         } else {
-            button.title = ""
+            button.toolTip = "TinyTodo · 剩余 \(pendingCount) 项待办；点击展开"
         }
+        button.font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium)
     }
 
     private func rebuild(_ menu: NSMenu) {

@@ -34,8 +34,10 @@ TinyTodo 不是 Things 3 / Todoist 那种任务管理器，而是一个随时可
 | 历史记录 | 按本地日期分组（今天 / 昨天 / 最近 7 天 / 30 天）、按月查看、搜索、每天完成数量、累计完成数、恢复到待办、删除记录 |
 | 本地存储 | SQLite + GRDB，WAL 模式，事务写入，版本化迁移，崩溃后可恢复；历史永不自动清理 |
 | 备份 | JSON 导入 / 导出（ISO-8601 时间戳），导入按 id 合并，不清空现有数据 |
-| 菜单栏 | 左键在图标下展开应用自绘面板（类似 Magpie），点击外部收起；右键菜单（今日完成数、快速添加、历史、设置、退出） |
+| 菜单栏 | 左键在图标下展开应用自绘面板（类似 Magpie），点击外部收起；图标显示剩余待办数；右键菜单（待办/今日完成、快速添加、历史、检查更新、设置、退出） |
 | 在线更新 | 设置 › 更新检查 GitHub `releases/latest`；校验 SHA-256、版本、Developer ID 团队、designated requirement 与公证后，自替换 `/Applications` 内应用并重启 |
+| iCloud 存储 | 设置 › 数据 › 使用 iCloud Drive…：SQLite 单文件放在所选文件夹，由 iCloud 同步到其他 Mac；切换时可选保留哪边数据并重启 |
+| 菜单栏计数 | 状态栏图标显示**剩余待办数**（非今日完成数），菜单中同时列出待办与今日完成 |
 | 全局快捷键 | 默认 `⌥⇧T`，Carbon 注册，不需要辅助功能权限；可在设置中修改并检测冲突 |
 | 设置 | 外观（跟随系统/浅色/深色）、窗口透明度、置顶、跨桌面、菜单栏计数、开机启动、快捷键、数据库位置/版本/大小、重置窗口位置 |
 
@@ -69,12 +71,18 @@ TinyTodo 不是 Things 3 / Todoist 那种任务管理器，而是一个随时可
 
 ### 数据
 
+默认本机位置：
+
 ```
 ~/Library/Application Support/TinyTodo/
 ├── TinyTodo.sqlite
 ├── TinyTodo.sqlite-wal
 └── TinyTodo.sqlite-shm
 ```
+
+iCloud 模式（设置 › 数据 › 使用 iCloud Drive…）把 `TinyTodo.sqlite` 放在用户选择的 iCloud Drive
+文件夹，使用 `journal_mode=DELETE` 的单文件写入，由 iCloud 负责同步。切换存储位置会复制数据并备份旧库，
+之后需要重启应用。iCloud 是文件级同步，不做冲突合并，建议同一时间只在一台 Mac 上编辑。
 
 ```sql
 CREATE TABLE todos (
@@ -101,7 +109,7 @@ xcodegen generate
 # 构建
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' build
 
-# 单元 + 集成测试（100 个）
+# 单元 + 集成测试（111 个）
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' test
 
 # 开发用 ad-hoc DMG
@@ -118,13 +126,14 @@ bash scripts/notarize.sh
 
 ### 测试
 
-- `TinyTodoTests`：100 个单元/集成测试，覆盖创建/批量创建/并发创建、完成与撤销、排序、重命名、删除恢复、历史搜索与日期过滤、今日统计、WAL、重启持久化、v1→v3 迁移不丢数据、JSON 导入导出、按天分组（含夏令时）、撤销栈、视图模型流程、真实 `NSPanel` 的置顶/Spaces/透明度/帧持久化。
+- `TinyTodoTests`：111 个单元/集成测试，覆盖创建/批量创建/并发创建、完成与撤销、排序、重命名、删除恢复、历史搜索与日期过滤、今日统计、WAL、重启持久化、v1→v3 迁移不丢数据、JSON 导入导出、按天分组（含夏令时）、撤销栈、视图模型流程、真实 `NSPanel` 的置顶/Spaces/透明度/帧持久化。
 - `TinyTodoUITests`：XCUITest 覆盖启动出窗、输入创建、勾选完成进入历史、历史页、设置窗口、以及「自动化窗口落在非主屏」。UI-test 模式下 `TestScreenPolicy` 会把面板和设置窗口放到非主显示器，避免占用用户正在工作的屏幕。XCUITest 需要给测试运行器授予「辅助功能/自动化」权限（系统设置 › 隐私与安全性 › 辅助功能）；CI 只编译该测试包（GitHub 托管 runner 无登录 GUI 会话）。
 - GitHub Actions：`.github/workflows/build.yml` 在 `macos-latest` 上构建 Release、跑测试、打出 DMG 并上传 artifact。
 
 ### 已知限制
 
 - 1.0.x 没有更新组件：升级到 1.1.0 需要手动安装一次 DMG；从 1.1.0 起可在应用内检查并安装后续更新。
+- iCloud 为文件级同步：两台 Mac 同时编辑可能以最后写入为准，不做逐条合并。
 - 1.0 不含 iCloud 同步、到期提醒、子任务、标签/项目、AI 功能（按产品范围刻意不做）。
 - 发布用 DMG 由 `scripts/release.sh` + `scripts/notarize.sh` 产出：Developer ID 签名、Hardened Runtime、secure timestamp，app 与 DMG 均已公证并 staple；凭据与流程见 [docs/RELEASE.md](docs/RELEASE.md)。`scripts/make_dmg.sh` 仅用于本地 ad-hoc 测试包。
 - UI 文案为中文；代码与数据格式与语言无关。
@@ -198,7 +207,7 @@ project builds offline and CI needs no package downloads.
 
 ### Testing
 
-100 unit/integration tests cover the repository, migrations (including a v1 database upgrade that
+111 unit/integration tests cover the repository, migrations (including a v1 database upgrade that
 keeps history rows), JSON import/export, day grouping (DST included), undo, view-model flows and the
 real panel's level, Spaces behavior, opacity and frame persistence. XCUITest covers launch, create,
 complete, history, settings, and that the automation window lands on a non-main display. UI tests need

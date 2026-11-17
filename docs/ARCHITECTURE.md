@@ -34,6 +34,13 @@ hidesOnDeactivate = false
 窗口内容为 `NSHostingView<PanelRootView>`；拖动由头部 `WindowDragArea`（`performDrag`）
 和 `isMovableByWindowBackground` 共同提供。
 
+## 存储位置
+
+默认使用 `~/Library/Application Support/TinyTodo/TinyTodo.sqlite`（WAL）。
+设置 › 数据可以切换到一个 iCloud Drive 文件夹，此时数据库以单文件回滚日志模式
+（`journal_mode=DELETE`、`synchronous=FULL`）运行，避免 `-wal`/`-shm` 旁文件干扰 iCloud 同步。
+切换是复制 + 冲突选择 + 重启，不会删除旧数据；切回本机会保留带时间戳的本地备份。
+
 ## 线程与数据流
 
 - 所有 SQLite 操作经由 `TodoRepository`，在 GRDB 的串行队列上执行；UI 不直接触碰 SQL。

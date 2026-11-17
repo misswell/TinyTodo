@@ -7,6 +7,8 @@ struct SettingsActions {
     var revealDatabase: () -> Void
     var copyDatabasePath: () -> Void
     var resetWindowPosition: () -> Void
+    var chooseICloudFolder: () -> Void
+    var useLocalStorage: () -> Void
 }
 
 @MainActor
@@ -16,6 +18,8 @@ final class SettingsStatusModel {
     var databaseVersion: String = "—"
     var databaseSize: String = "—"
     var databasePath: String = "—"
+    var storageDescription: String = "—"
+    var isUsingICloud: Bool = false
 }
 
 struct SettingsView: View {
@@ -48,7 +52,7 @@ struct SettingsView: View {
             Section("窗口行为") {
                 Toggle("始终置顶", isOn: alwaysOnTopBinding)
                 Toggle("跨桌面空间显示", isOn: acrossSpacesBinding)
-                Toggle("菜单栏显示今日完成数", isOn: menuBarCountBinding)
+                Toggle("菜单栏显示剩余待办数", isOn: menuBarCountBinding)
                 Toggle("开机自动启动", isOn: launchAtLoginBinding)
                 if let error = settings.launchAtLoginError {
                     Text(error)
@@ -82,12 +86,24 @@ struct SettingsView: View {
                 LabeledContent("数据库版本", value: status.databaseVersion)
                 LabeledContent("数据库大小", value: status.databaseSize)
                 LabeledContent("存储位置") {
-                    Text(status.databasePath)
-                        .font(.system(size: 11, design: .monospaced))
+                    Text(status.storageDescription)
+                        .font(.system(size: 11))
                         .textSelection(.enabled)
                         .lineLimit(2)
                         .truncationMode(.middle)
                 }
+                HStack(spacing: 8) {
+                    Button(status.isUsingICloud ? "更换 iCloud 文件夹…" : "使用 iCloud Drive…") {
+                        actions.chooseICloudFolder()
+                    }
+                    if status.isUsingICloud {
+                        Button("改回本机存储") { actions.useLocalStorage() }
+                    }
+                    Spacer()
+                }
+                Text("iCloud 模式把 SQLite 文件放在你选择的 iCloud Drive 文件夹，由 iCloud 负责同步；切换后需要重启 TinyTodo。建议同一时间只在一台 Mac 上编辑。")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
                 HStack(spacing: 8) {
                     Button("导出 JSON…") { actions.exportJSON() }
                     Button("导入备份…") { actions.importJSON() }

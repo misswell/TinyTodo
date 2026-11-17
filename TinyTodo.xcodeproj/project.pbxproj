@@ -37,6 +37,7 @@
 		934DC5A41887BF0EBCE5F525 /* HistoryGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A609249563F819577278118 /* HistoryGrouping.swift */; };
 		93C69E4C78EC1D9BFF649A14 /* QuickInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60097DB1C1DEF452EBCEAE87 /* QuickInputView.swift */; };
 		9A33F133775FAF458F773B3E /* UndoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184EDB6B6F8AD7A08993764 /* UndoService.swift */; };
+		9D738D8C775D1C3AE2D318AA /* StorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6828EE7E2D6AFBE7077A1C3D /* StorageTests.swift */; };
 		9DB148D1254BF117739CF954 /* HistoryDateGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93D88EB5BF9391B890277B8A /* HistoryDateGroupView.swift */; };
 		A22E4817E1323544411D6318 /* TestScreenPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D259B251B615DFB5C562958 /* TestScreenPolicy.swift */; };
 		AE535B37D47C1056A7059C75 /* DatabaseMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F542A7D01B344A2081ADCC71 /* DatabaseMigration.swift */; };
@@ -61,6 +62,7 @@
 		F69A65AA832CC1B77FC258C5 /* TodoViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E3FF53605D95390EE85DB7 /* TodoViewModelTests.swift */; };
 		F94D4A4D7B4571AE6D0FDBAE /* update-helper.sh in Resources */ = {isa = PBXBuildFile; fileRef = 75FA85C7395F2FA9D6A5AE9C /* update-helper.sh */; };
 		FB8046EE770576E74189DCCD /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE01564BD01363ADCA060628 /* HistoryView.swift */; };
+		FD6693C0A76399592E6DF726 /* StorageLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29E91A5BCD89D643B976184C /* StorageLocation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +89,7 @@
 		1D1B3405BA22D7488AA70A46 /* KeyboardShortcuts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KeyboardShortcuts; path = Vendor/KeyboardShortcuts; sourceTree = SOURCE_ROOT; };
 		239A556ACAEDCAE5D881E88C /* SoftwareUpdateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftwareUpdateTests.swift; sourceTree = "<group>"; };
 		293CF3AD77B46069482FAAA3 /* AppLifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLifecycle.swift; sourceTree = "<group>"; };
+		29E91A5BCD89D643B976184C /* StorageLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageLocation.swift; sourceTree = "<group>"; };
 		2A609249563F819577278118 /* HistoryGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryGrouping.swift; sourceTree = "<group>"; };
 		2FCD38725924F86D69146829 /* UpdateInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateInstaller.swift; sourceTree = "<group>"; };
 		3DCE7FFDF536C60086975C9F /* HotKeyNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyNames.swift; sourceTree = "<group>"; };
@@ -99,6 +102,7 @@
 		569D59FF31B3E729C33EAFFA /* TodoRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoRepositoryTests.swift; sourceTree = "<group>"; };
 		57F9427F1F563520D3DA65AB /* MenuPanelPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPanelPlacement.swift; sourceTree = "<group>"; };
 		60097DB1C1DEF452EBCEAE87 /* QuickInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickInputView.swift; sourceTree = "<group>"; };
+		6828EE7E2D6AFBE7077A1C3D /* StorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageTests.swift; sourceTree = "<group>"; };
 		6A044EFF67449B412A1EC535 /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
 		7402586830242EA9A938B4A1 /* QuickInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickInputBar.swift; sourceTree = "<group>"; };
 		75FA85C7395F2FA9D6A5AE9C /* update-helper.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "update-helper.sh"; sourceTree = "<group>"; };
@@ -191,6 +195,7 @@
 				14F4D4043B105B19C8B4BFA3 /* HistoryGroupingTests.swift */,
 				77CC9FF09AF21DDCD3DF0D8B /* ImportExportTests.swift */,
 				239A556ACAEDCAE5D881E88C /* SoftwareUpdateTests.swift */,
+				6828EE7E2D6AFBE7077A1C3D /* StorageTests.swift */,
 				DDC2F8D93F588C0FEDF88F93 /* SupportTests.swift */,
 				569D59FF31B3E729C33EAFFA /* TodoRepositoryTests.swift */,
 				C9E3FF53605D95390EE85DB7 /* TodoViewModelTests.swift */,
@@ -335,6 +340,7 @@
 				DDB2ACB3AC0088E06D0F71B4 /* SemanticVersion.swift */,
 				E3895C217A84384922D299CD /* SoftwareUpdate.swift */,
 				93EFA5CB61AD30FE4B659FF9 /* StartupService.swift */,
+				29E91A5BCD89D643B976184C /* StorageLocation.swift */,
 				F184EDB6B6F8AD7A08993764 /* UndoService.swift */,
 				2FCD38725924F86D69146829 /* UpdateInstaller.swift */,
 			);
@@ -530,6 +536,7 @@
 				B34259B3D173458DB52EA0EC /* SettingsWindowController.swift in Sources */,
 				53661584261F3BDD1340FF65 /* SoftwareUpdate.swift in Sources */,
 				375684DDFD1CB836B5279995 /* StartupService.swift in Sources */,
+				FD6693C0A76399592E6DF726 /* StorageLocation.swift in Sources */,
 				A22E4817E1323544411D6318 /* TestScreenPolicy.swift in Sources */,
 				8739B4A0A0BDA394E744B728 /* TodoItem.swift in Sources */,
 				197A2A1362AB0264421A30A1 /* TodoRepository.swift in Sources */,
@@ -554,6 +561,7 @@
 				DE22FFA9EADB943A2C14AEAF /* HistoryGroupingTests.swift in Sources */,
 				CCA80C4DF49328EE48827907 /* ImportExportTests.swift in Sources */,
 				CFFD229E1B4A97ABBF89F142 /* SoftwareUpdateTests.swift in Sources */,
+				9D738D8C775D1C3AE2D318AA /* StorageTests.swift in Sources */,
 				1B88F806D8C39E5C4F899323 /* SupportTests.swift in Sources */,
 				44F82068F796C8B71BFC801E /* TodoRepositoryTests.swift in Sources */,
 				F69A65AA832CC1B77FC258C5 /* TodoViewModelTests.swift in Sources */,
@@ -592,7 +600,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = TinyTodo/Resources/Info.plist;
@@ -600,7 +608,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = macosx;
@@ -786,14 +794,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				ENABLE_APP_SANDBOX = NO;
 				INFOPLIST_FILE = TinyTodo/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = macosx;

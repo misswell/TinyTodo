@@ -276,3 +276,13 @@ final class MenuPanelPlacementTests: XCTestCase {
         XCTAssertEqual(frame.height, visible.height)
     }
 }
+
+
+@MainActor
+final class MenuBarBadgeTests: XCTestCase {
+    func testBadgeShowsRemainingCount() {
+        XCTAssertEqual(MenuBarController.badgeText(pendingCount: 5, enabled: true), " 5")
+        XCTAssertEqual(MenuBarController.badgeText(pendingCount: 0, enabled: true), "")
+        XCTAssertEqual(MenuBarController.badgeText(pendingCount: 5, enabled: false), "")
+    }
+}
