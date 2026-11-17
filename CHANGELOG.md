@@ -4,6 +4,21 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] — 2026-11-17
+
+### Changed
+
+- Panel spacing/margins: 38 pt header with the progress centred independently of the pin/gear
+  buttons, 14 pt side margins everywhere, roomier rows (5 pt vertical padding, 7 pt hover corner),
+  wider quick-input bar, larger tab bar and history rhythm.
+- Menu bar badge: shows the number of **remaining** todos (verified in a live run: 2 pending →
+  badge `2`, 1 completed → unchanged). 1.1.0 and earlier showed today's completions.
+
+### Notes
+
+- Version 1.2.1 (build 6). Install once manually only if you are still on 1.0.x; 1.1.0+ can update
+  from Settings › 更新.
+
 ## [1.2.0] — 2026-11-17
 
 ### Added

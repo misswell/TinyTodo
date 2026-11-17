@@ -8,9 +8,9 @@ struct QuickInputBar: View {
     var onEscape: () -> Void
 
     var body: some View {
-        HStack(alignment: .center, spacing: 8) {
+        HStack(alignment: .center, spacing: 9) {
             Image(systemName: "plus.circle.fill")
-                .font(.system(size: 13, weight: .regular))
+                .font(.system(size: 13.5, weight: .regular))
                 .foregroundStyle(Color.accentColor.opacity(0.85))
 
             ZStack(alignment: .leading) {
@@ -31,8 +31,8 @@ struct QuickInputBar: View {
                 .accessibilityIdentifier("quick.input")
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 9)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
         .background(Color.primary.opacity(0.035))
     }
 }

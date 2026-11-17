@@ -15,7 +15,7 @@ struct HistoryDateGroupView: View {
                     .foregroundStyle(.tertiary)
                 Spacer(minLength: 0)
             }
-            .padding(.bottom, 1)
+            .padding(.bottom, 2)
 
             ForEach(section.items) { item in
                 HistoryRowView(item: item)
@@ -49,7 +49,7 @@ struct HistoryRowView: View {
                     .foregroundStyle(.tertiary)
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 4)
         .padding(.horizontal, 4)
         .background(
             RoundedRectangle(cornerRadius: 5, style: .continuous)

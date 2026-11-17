@@ -6,47 +6,49 @@ struct PanelHeaderView: View {
     var onOpenSettings: () -> Void
 
     var body: some View {
-        HStack(spacing: 8) {
-            Text(AppInfo.displayName)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.primary)
+        ZStack {
+            HStack(spacing: 0) {
+                Text(AppInfo.displayName)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.primary)
 
-            Spacer(minLength: 4)
+                Spacer(minLength: 12)
+
+                HStack(spacing: 4) {
+                    Button {
+                        settings.alwaysOnTop.toggle()
+                    } label: {
+                        Image(systemName: settings.alwaysOnTop ? "pin.fill" : "pin")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(settings.alwaysOnTop ? Color.accentColor : Color.secondary)
+                            .frame(width: 22, height: 22)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .help(settings.alwaysOnTop ? "取消置顶" : "始终置顶")
+                    .accessibilityIdentifier("header.pin")
+
+                    Button(action: onOpenSettings) {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 22, height: 22)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .help("设置（⌘,）")
+                    .accessibilityIdentifier("header.settings")
+                }
+            }
 
             Text(todo.stats.progressText)
                 .font(.system(size: 11, weight: .medium).monospacedDigit())
                 .foregroundStyle(.secondary)
                 .help("今日进度：已完成 \(todo.stats.completed) 项，今日任务 \(max(todo.stats.total, todo.stats.completed)) 项")
                 .accessibilityIdentifier("header.progress")
-
-            Spacer(minLength: 4)
-
-            Button {
-                settings.alwaysOnTop.toggle()
-            } label: {
-                Image(systemName: settings.alwaysOnTop ? "pin.fill" : "pin")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(settings.alwaysOnTop ? Color.accentColor : Color.secondary)
-                    .frame(width: 20, height: 20)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .help(settings.alwaysOnTop ? "取消置顶" : "始终置顶")
-            .accessibilityIdentifier("header.pin")
-
-            Button(action: onOpenSettings) {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 20, height: 20)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .help("设置（⌘,）")
-            .accessibilityIdentifier("header.settings")
         }
-        .padding(.horizontal, 12)
-        .frame(height: 32)
+        .padding(.horizontal, 14)
+        .frame(height: 38)
         .background(WindowDragArea())
         .background(Color.primary.opacity(0.04))
     }
@@ -57,7 +59,7 @@ struct PanelTabBar: View {
     @Environment(TodoViewModel.self) private var todo
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 16) {
             tabButton(title: "待办", systemImage: "list.bullet", tab: .todo)
             tabButton(title: "历史", systemImage: "clock.arrow.circlepath", tab: .history)
             Spacer(minLength: 0)
@@ -66,8 +68,8 @@ struct PanelTabBar: View {
                 .foregroundStyle(.tertiary)
                 .accessibilityIdentifier("footer.todayCompleted")
         }
-        .padding(.horizontal, 12)
-        .frame(height: 28)
+        .padding(.horizontal, 14)
+        .frame(height: 34)
         .background(Color.primary.opacity(0.04))
     }
 
@@ -80,7 +82,7 @@ struct PanelTabBar: View {
                 Text(title).font(.system(size: 11, weight: router.tab == tab ? .semibold : .regular))
             }
             .foregroundStyle(router.tab == tab ? Color.primary : Color.secondary)
-            .padding(.vertical, 3)
+            .padding(.vertical, 5)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

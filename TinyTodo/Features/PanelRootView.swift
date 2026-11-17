@@ -51,7 +51,7 @@ struct PanelRootView: View {
         .ignoresSafeArea()
         .overlay(alignment: .bottom) {
             ToastOverlay()
-                .padding(.bottom, router.tab == .todo ? 74 : 34)
+                .padding(.bottom, router.tab == .todo ? 84 : 40)
                 .animation(.easeInOut(duration: 0.18), value: todo.toast?.id)
         }
         .frame(minWidth: AppInfo.minimumPanelSize.width, minHeight: AppInfo.minimumPanelSize.height)

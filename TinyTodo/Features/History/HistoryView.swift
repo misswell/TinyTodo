@@ -76,9 +76,9 @@ struct HistoryView: View {
             .frame(width: 22)
             .help("按月份查看")
         }
-        .padding(.horizontal, 10)
-        .padding(.top, 8)
-        .padding(.bottom, 4)
+        .padding(.horizontal, 14)
+        .padding(.top, 10)
+        .padding(.bottom, 6)
     }
 
     private var filterBar: some View {
@@ -105,8 +105,8 @@ struct HistoryView: View {
                 }
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.bottom, 6)
+        .padding(.horizontal, 14)
+        .padding(.bottom, 8)
     }
 
     @ViewBuilder
@@ -131,13 +131,13 @@ struct HistoryView: View {
             .accessibilityIdentifier("history.empty")
         } else {
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 10) {
+                LazyVStack(alignment: .leading, spacing: 12) {
                     ForEach(model.sections) { section in
                         HistoryDateGroupView(section: section)
                     }
                 }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
             }
             .accessibilityIdentifier("history.list")
         }
@@ -155,8 +155,8 @@ struct HistoryView: View {
                     .controlSize(.mini)
             }
         }
-        .padding(.horizontal, 12)
-        .frame(height: 24)
+        .padding(.horizontal, 14)
+        .frame(height: 30)
         .background(Color.primary.opacity(0.04))
     }
 
@@ -168,8 +168,8 @@ struct HistoryView: View {
             Text(title)
                 .font(.system(size: 10, weight: selected ? .semibold : .regular))
                 .foregroundStyle(selected ? Color.accentColor : Color.secondary)
-                .padding(.horizontal, 7)
-                .padding(.vertical, 3)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
                 .background(
                     RoundedRectangle(cornerRadius: 5, style: .continuous)
                         .fill(selected ? Color.accentColor.opacity(0.12) : Color.clear)

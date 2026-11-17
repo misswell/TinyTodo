@@ -17,7 +17,7 @@ struct TodoView: View {
         List {
             ForEach(model.items) { item in
                 TodoRowView(item: item, isEditing: model.editingID == item.id)
-                    .listRowInsets(EdgeInsets(top: 1, leading: 10, bottom: 1, trailing: 10))
+                    .listRowInsets(EdgeInsets(top: 2, leading: 12, bottom: 2, trailing: 12))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
             }
@@ -27,20 +27,21 @@ struct TodoView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .environment(\.defaultMinListRowHeight, 26)
+        .environment(\.defaultMinListRowHeight, 28)
+        .padding(.top, 4)
         .accessibilityIdentifier("todo.list")
     }
 
     private var emptyState: some View {
-        VStack(spacing: 7) {
+        VStack(spacing: 8) {
             Image(systemName: "checkmark.circle")
-                .font(.system(size: 26, weight: .light))
+                .font(.system(size: 28, weight: .light))
                 .foregroundStyle(.quaternary)
             Text("没有待办")
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: 12.5, weight: .medium))
                 .foregroundStyle(.secondary)
             Text("在下方输入，按 Enter 保存")
-                .font(.system(size: 11))
+                .font(.system(size: 11.5))
                 .foregroundStyle(.tertiary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -56,12 +57,12 @@ struct TodoRowView: View {
     @State private var isHovering = false
 
     var body: some View {
-        HStack(alignment: .center, spacing: 9) {
+        HStack(alignment: .center, spacing: 10) {
             Button {
                 model.complete(item)
             } label: {
                 Image(systemName: isHovering ? "checkmark.circle" : "circle")
-                    .font(.system(size: 14, weight: .regular))
+                    .font(.system(size: 14.5, weight: .regular))
                     .foregroundStyle(isHovering ? Color.accentColor : Color.secondary.opacity(0.75))
                     .frame(width: 18, height: 18)
                     .contentShape(Rectangle())
@@ -84,16 +85,17 @@ struct TodoRowView: View {
                 Text(item.title)
                     .font(.system(size: 13))
                     .foregroundStyle(.primary)
+                    .lineSpacing(2)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
             Spacer(minLength: 0)
         }
-        .padding(.vertical, 3)
-        .padding(.horizontal, 3)
+        .padding(.vertical, 5)
+        .padding(.horizontal, 4)
         .background(
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
+            RoundedRectangle(cornerRadius: 7, style: .continuous)
                 .fill(isHovering ? Color.primary.opacity(0.05) : Color.clear)
         )
         .contentShape(Rectangle())
