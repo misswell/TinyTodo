@@ -171,7 +171,10 @@ No accounts, no network, no cloud. Everything lives in a local SQLite database.
 - **JSON export/import** with ISO-8601 timestamps; import merges by id.
 - **Global hotkey** `⌥⇧T` registered through Carbon, so no Accessibility permission is required.
   Configurable with conflict detection. `⌘N` new, `⌘F` search history, `⌘Z` undo, `⌘,` settings.
-- **Menu bar**: left click expands the panel as the app's own dropdown under the icon (Magpie-style, dismisses on outside click); right click (or Control-click) opens the menu with today's count, quick add, history, settings and quit.
+- **Menu bar**: left click expands the panel as the app's own dropdown under the icon (Magpie-style, dismisses on outside click); the badge shows the remaining todo count; right click (or Control-click) opens the menu with remaining/today counts, quick add, history, updates, settings and quit.
+- **iCloud Drive storage**: Settings › 数据 › 使用 iCloud Drive… stores `TinyTodo.sqlite` in a folder you
+  pick in iCloud Drive (single-file journal so iCloud replicates it), with conflict choice on switch,
+  a timestamped local backup when switching back, and a restart prompt.
 - **Online updates**: Settings › 更新 (or menu bar › 检查更新…) checks GitHub `releases/latest`,
   verifies the DMG's SHA-256 digest, bundle id/version, Developer ID team, designated requirement
   and notarization, then swaps the `/Applications` bundle via a helper and relaunches.

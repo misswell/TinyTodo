@@ -24,6 +24,7 @@ final class DatabaseManager {
     let storageMode: StorageMode
     let dbQueue: DatabaseQueue
     private let logger = Logger(subsystem: AppInfo.subsystem, category: "database")
+    private static let bootstrapLogger = Logger(subsystem: AppInfo.subsystem, category: "database")
 
     static var defaultDirectoryURL: URL {
         let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
@@ -43,7 +44,14 @@ final class DatabaseManager {
         } else if let folder = StorageLocation.configuredICloudFolder(),
                   StorageLocation.mode() == .iCloud,
                   FileManager.default.fileExists(atPath: StorageLocation.iCloudDriveRoot.path) {
-            try self.init(directory: folder, storageMode: .iCloud)
+            do {
+                try self.init(directory: folder, storageMode: .iCloud)
+            } catch {
+                // iCloud can be unavailable (signed out, evicted file, read-only folder). Never let
+                // that brick the app: start on the local database and let Settings show the mismatch.
+                Self.bootstrapLogger.error("iCloud database unavailable: \(error.localizedDescription, privacy: .public); falling back to local")
+                try self.init(directory: Self.defaultDirectoryURL, storageMode: .local)
+            }
         } else {
             try self.init(directory: Self.defaultDirectoryURL, storageMode: .local)
         }
