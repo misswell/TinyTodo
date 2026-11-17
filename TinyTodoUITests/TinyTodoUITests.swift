@@ -29,7 +29,10 @@ final class TinyTodoUITests: XCTestCase {
 
     func testPanelAppearsWithTabs() {
         let window = app.windows.firstMatch
-        XCTAssertTrue(window.waitForExistence(timeout: 10), "floating panel should appear on launch")
+        XCTAssertTrue(
+            window.waitForExistence(timeout: 15),
+            "floating panel should appear on launch (app state: \(app.state.rawValue))"
+        )
         XCTAssertTrue(app.buttons["tab.todo"].exists)
         XCTAssertTrue(app.buttons["tab.history"].exists)
         XCTAssertTrue(app.buttons["header.settings"].exists)

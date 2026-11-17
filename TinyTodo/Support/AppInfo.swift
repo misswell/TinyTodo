@@ -16,7 +16,10 @@ enum AppInfo {
     }
 
     static var isRunningUnitTests: Bool {
-        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+        // Hosted unit tests inject XCTest into the app process. UI tests launch the app as a
+        // plain bundle (no XCTestCase class), and `XCTestConfigurationFilePath` may be present
+        // in both cases, so check for the framework itself.
+        NSClassFromString("XCTestCase") != nil
     }
 
     static var isRunningUITests: Bool {
