@@ -7,6 +7,7 @@ final class SettingsWindowController {
     private let database: DatabaseManager
     private let importExport: ImportExportService
     private let hotKey: HotKeyManager
+    private let updateService: SoftwareUpdateService
     private let status = SettingsStatusModel()
     private var window: NSWindow?
 
@@ -16,12 +17,14 @@ final class SettingsWindowController {
         settings: SettingsStore,
         database: DatabaseManager,
         importExport: ImportExportService,
-        hotKey: HotKeyManager
+        hotKey: HotKeyManager,
+        updateService: SoftwareUpdateService
     ) {
         self.settings = settings
         self.database = database
         self.importExport = importExport
         self.hotKey = hotKey
+        self.updateService = updateService
     }
 
     func show() {
@@ -65,6 +68,7 @@ final class SettingsWindowController {
             rootView: SettingsView(
                 hotKey: hotKey,
                 status: status,
+                updateService: updateService,
                 actions: SettingsActions(
                     exportJSON: { [weak self] in self?.exportJSON() },
                     importJSON: { [weak self] in self?.importJSON() },

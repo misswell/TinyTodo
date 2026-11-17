@@ -9,6 +9,10 @@ enum AppInfo {
     static let minimumPanelSize = CGSize(width: 300, height: 320)
     static let defaultsSuiteName: String? = nil
 
+    static var shortVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
+    }
+
     static var appVersion: String {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"

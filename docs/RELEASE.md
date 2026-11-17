@@ -54,6 +54,15 @@ spctl --assess --type open --context context:primary-signature build/TinyTodo-1.
 
 任何一步失败就停下来；不要用“再提交一次”掩盖问题，先 `xcrun notarytool log <id> --keychain-profile agentspace-notary` 看具体原因。
 
+## 应用内更新通道
+
+- 更新源唯一：`https://api.github.com/repos/misswell/TinyTodo/releases/latest`（GitHub 直接提供，镜像不能改变期望的版本或摘要）。
+- 资产名必须精确为 `TinyTodo-<version>.dmg`，并带 GitHub 的 `digest`（`sha256:<64 hex>`）；无 digest 的 Release 不会被客户端接受。
+- 客户端校验顺序：SHA-256 → DMG 内 `TinyTodo.app` 的 bundle id/版本 → `codesign --deep --strict` → TeamIdentifier `U8U443D7ZL` → 与运行副本相同的 designated requirement → `spctl` 公证校验。
+- 安装：`TinyTodo/Resources/update-helper.sh` 等待旧进程退出，备份并替换 `/Applications/TinyTodo.app`，去 quarantine 后直接启动新二进制；非 `/Applications` 副本拒绝自动替换。
+
+**发版完成的判据**：`releases/latest` 必须已经返回新 tag，并且该资产带本次构建的 digest；发布后下载一次附件核对 SHA-256。
+
 ## 版本号
 
 `project.yml` 的 `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` 是唯一来源，

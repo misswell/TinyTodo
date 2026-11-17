@@ -250,3 +250,29 @@ final class MenuBarInteractionTests: XCTestCase {
         XCTAssertTrue(MenuBarController.wantsMenu(eventType: .leftMouseUp, modifierFlags: [.control]))
     }
 }
+
+final class MenuPanelPlacementTests: XCTestCase {
+    func testPanelIsCentredUnderTheStatusItem() {
+        let visible = CGRect(x: 0, y: 0, width: 1920, height: 1055)
+        let button = CGRect(x: 1200, y: 1080, width: 24, height: 24)
+        let frame = MenuPanelPlacement.frame(buttonScreenFrame: button, visibleFrame: visible, size: CGSize(width: 340, height: 460))
+        XCTAssertEqual(frame.midX, button.midX, accuracy: 0.5)
+        XCTAssertEqual(frame.maxY, button.minY - 6, accuracy: 0.5)
+        XCTAssertEqual(frame.width, 340)
+    }
+
+    func testPanelClampsToTheRightEdge() {
+        let visible = CGRect(x: 0, y: 0, width: 1920, height: 1055)
+        let button = CGRect(x: 1900, y: 1080, width: 24, height: 24)
+        let frame = MenuPanelPlacement.frame(buttonScreenFrame: button, visibleFrame: visible, size: CGSize(width: 340, height: 460))
+        XCTAssertLessThanOrEqual(frame.maxX, visible.maxX)
+    }
+
+    func testPanelNeverStartsBelowTheScreen() {
+        let visible = CGRect(x: 0, y: 0, width: 1920, height: 300)
+        let button = CGRect(x: 900, y: 1080, width: 24, height: 24)
+        let frame = MenuPanelPlacement.frame(buttonScreenFrame: button, visibleFrame: visible, size: CGSize(width: 340, height: 460))
+        XCTAssertGreaterThanOrEqual(frame.minY, visible.minY)
+        XCTAssertEqual(frame.height, visible.height)
+    }
+}

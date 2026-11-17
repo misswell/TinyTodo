@@ -22,6 +22,7 @@ struct SettingsView: View {
     @Environment(SettingsStore.self) private var settings
     let hotKey: HotKeyManager
     let status: SettingsStatusModel
+    let updateService: SoftwareUpdateService
     let actions: SettingsActions
 
     var body: some View {
@@ -104,6 +105,21 @@ struct SettingsView: View {
                 }
             }
 
+            Section("更新") {
+                LabeledContent("当前版本", value: AppInfo.appVersion)
+                Toggle("启动时自动检查更新", isOn: autoCheckBinding)
+                HStack(spacing: 8) {
+                    Button("检查更新") {
+                        Task { await updateService.check(userInitiated: true) }
+                    }
+                    .disabled(updateService.state.isBusy)
+                    Text(updateService.statusText)
+                        .font(.system(size: 11))
+                        .foregroundStyle(updateColor)
+                }
+                updateDetail
+            }
+
             Section("关于") {
                 LabeledContent("版本", value: AppInfo.appVersion)
                 LabeledContent("快捷键", value: "⌘N 新建 · ⌘F 搜索历史 · ⌘Z 撤销 · ⌘, 设置")
@@ -143,6 +159,57 @@ struct SettingsView: View {
 
     private var menuBarCountBinding: Binding<Bool> {
         Binding(get: { settings.showMenuBarCount }, set: { settings.showMenuBarCount = $0 })
+    }
+
+    private var autoCheckBinding: Binding<Bool> {
+        Binding(get: { settings.autoCheckForUpdates }, set: { settings.autoCheckForUpdates = $0 })
+    }
+
+    private var updateColor: Color {
+        switch updateService.state {
+        case .failed: return .red
+        case .available: return .accentColor
+        default: return .secondary
+        }
+    }
+
+    @ViewBuilder
+    private var updateDetail: some View {
+        switch updateService.state {
+        case let .available(candidate):
+            VStack(alignment: .leading, spacing: 6) {
+                Text("发现新版本 \(candidate.version)（当前 \(AppInfo.shortVersion)）")
+                    .font(.system(size: 12, weight: .semibold))
+                if !candidate.notes.isEmpty {
+                    Text(candidate.notes)
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(8)
+                        .textSelection(.enabled)
+                }
+                HStack(spacing: 10) {
+                    Button("下载并安装") {
+                        Task { await updateService.downloadAndInstall() }
+                    }
+                    Link("发布说明", destination: candidate.htmlURL)
+                    Text(ByteCountFormatter.string(fromByteCount: candidate.size, countStyle: .file))
+                        .font(.system(size: 10))
+                        .foregroundStyle(.tertiary)
+                }
+                if !UpdateInstaller.canSelfUpdate(bundlePath: Bundle.main.bundleURL.path) {
+                    Text("当前副本不在 /Applications，无法自动替换；请手动下载安装。")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.orange)
+                }
+            }
+            .padding(.top, 2)
+        case .downloading:
+            ProgressView().controlSize(.small)
+        case .verifying, .installing:
+            ProgressView().controlSize(.small)
+        default:
+            EmptyView()
+        }
     }
 
     private var launchAtLoginBinding: Binding<Bool> {

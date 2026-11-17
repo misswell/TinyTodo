@@ -7,6 +7,7 @@ final class MenuBarController: NSObject {
     private let panelController: FloatingPanelController
 
     var onOpenSettings: (() -> Void)?
+    var onCheckForUpdates: (() -> Void)?
     var onQuit: (() -> Void)?
 
     private var todayCompleted = 0
@@ -44,7 +45,7 @@ final class MenuBarController: NSObject {
         if Self.wantsMenu(eventType: event?.type, modifierFlags: event?.modifierFlags ?? []) {
             showMenu()
         } else {
-            panelController.toggle()
+            panelController.toggleFromMenuBar(anchor: statusItem.button)
         }
     }
 
@@ -89,6 +90,7 @@ final class MenuBarController: NSObject {
         menu.addItem(item(title: "快速添加…", action: #selector(quickAdd), key: "n"))
         menu.addItem(item(title: "历史记录", action: #selector(showHistory), key: "f"))
         menu.addItem(.separator())
+        menu.addItem(item(title: "检查更新…", action: #selector(checkForUpdates), key: ""))
         menu.addItem(item(title: "设置…", action: #selector(openSettings), key: ","))
         menu.addItem(.separator())
         menu.addItem(item(title: "退出 TinyTodo", action: #selector(quit), key: "q"))
@@ -114,6 +116,10 @@ final class MenuBarController: NSObject {
 
     @objc private func openSettings() {
         onOpenSettings?()
+    }
+
+    @objc private func checkForUpdates() {
+        onCheckForUpdates?()
     }
 
     @objc private func quit() {

@@ -28,6 +28,7 @@ final class AppEnvironment {
     let settingsWindowController: SettingsWindowController
     let hotKeyManager: HotKeyManager
     let menuBarController: MenuBarController
+    let updateService: SoftwareUpdateService
     private var lifecycle: AppLifecycle?
     private var started = false
 
@@ -55,12 +56,14 @@ final class AppEnvironment {
             windowState: windowState
         )
         hotKeyManager = HotKeyManager()
+        updateService = SoftwareUpdateService()
         menuBarController = MenuBarController(settings: settings, panelController: panelController)
         settingsWindowController = SettingsWindowController(
             settings: settings,
             database: database,
             importExport: importExport,
-            hotKey: hotKeyManager
+            hotKey: hotKeyManager,
+            updateService: updateService
         )
     }
 
@@ -87,6 +90,12 @@ final class AppEnvironment {
         })
 
         panelController.show(tab: .todo, focusInput: true)
+
+        if settings.autoCheckForUpdates, !AppInfo.isRunningUITests, !AppInfo.isRunningUnitTests {
+            Task { [weak self] in
+                await self?.updateService.checkAutomatically()
+            }
+        }
 
         if AppInfo.isRunningUITests {
             let diagnostic = "windows=\(NSApp.windows.count) visible=\(panelController.isVisible) "
@@ -132,6 +141,11 @@ final class AppEnvironment {
         menuBarController.onOpenSettings = { [weak self] in
             self?.openSettings()
         }
+        menuBarController.onCheckForUpdates = { [weak self] in
+            guard let self else { return }
+            self.openSettings()
+            Task { await self.updateService.check(userInitiated: true) }
+        }
         menuBarController.onQuit = {
             NSApp.terminate(nil)
         }
@@ -158,6 +172,8 @@ final class AppEnvironment {
             settingsWindowController.refreshStatus()
         case .menuBarCount:
             updateMenuBar()
+        case .autoCheckForUpdates:
+            break
         }
     }
 

@@ -30,6 +30,7 @@ final class SettingsStore {
         case acrossSpaces
         case launchAtLogin
         case menuBarCount
+        case autoCheckForUpdates
     }
 
     private enum Key {
@@ -39,6 +40,7 @@ final class SettingsStore {
         static let acrossSpaces = "settings.acrossSpaces"
         static let launchAtLogin = "settings.launchAtLogin"
         static let menuBarCount = "settings.menuBarCount"
+        static let autoCheckForUpdates = "settings.autoCheckForUpdates"
         static let didShowWelcome = "settings.didShowWelcome"
     }
 
@@ -89,6 +91,14 @@ final class SettingsStore {
         }
     }
 
+    var autoCheckForUpdates: Bool {
+        didSet {
+            guard !isRestoring else { return }
+            defaults.set(autoCheckForUpdates, forKey: Key.autoCheckForUpdates)
+            onChange?(.autoCheckForUpdates)
+        }
+    }
+
     /// Mirrors `SMAppService.mainApp` status. Writes go through `StartupService`.
     private(set) var launchAtLogin: Bool
     private(set) var launchAtLoginError: String?
@@ -101,6 +111,7 @@ final class SettingsStore {
         self.alwaysOnTop = defaults.object(forKey: Key.alwaysOnTop) as? Bool ?? true
         self.acrossSpaces = defaults.object(forKey: Key.acrossSpaces) as? Bool ?? true
         self.showMenuBarCount = defaults.object(forKey: Key.menuBarCount) as? Bool ?? true
+        self.autoCheckForUpdates = defaults.object(forKey: Key.autoCheckForUpdates) as? Bool ?? true
         self.launchAtLogin = StartupService.isEnabled
         self.isRestoring = false
     }

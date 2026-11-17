@@ -24,6 +24,15 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
 
     var onOpenSettings: (() -> Void)?
 
+    private enum PresentationMode {
+        case floating
+        case menu
+    }
+
+    private var presentationMode: PresentationMode = .floating
+    private var menuClickMonitor: Any?
+    private var menuResignObserver: NSObjectProtocol?
+
     init(
         settings: SettingsStore,
         router: AppRouter,
@@ -64,7 +73,56 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
     var isKey: Bool { panel.isKeyWindow }
     var window: NSWindow { panel }
 
+    /// Menu-bar click: expand the panel as the app's own dropdown, anchored under the status item.
+    func toggleFromMenuBar(anchor: NSStatusBarButton?) {
+        if panel.isVisible, panel.isKeyWindow {
+            hide()
+        } else {
+            showAsMenu(anchor: anchor)
+        }
+    }
+
+    private func showAsMenu(anchor: NSStatusBarButton?) {
+        guard let anchor, let buttonWindow = anchor.window,
+              let screen = buttonWindow.screen ?? NSScreen.main else {
+            show()
+            return
+        }
+        let buttonFrame = buttonWindow.convertToScreen(anchor.convert(anchor.bounds, to: nil))
+        let size = CGSize(
+            width: max(panel.frame.width, AppInfo.minimumPanelSize.width),
+            height: max(panel.frame.height, AppInfo.minimumPanelSize.height)
+        )
+        let frame = MenuPanelPlacement.frame(
+            buttonScreenFrame: buttonFrame,
+            visibleFrame: screen.visibleFrame,
+            size: size
+        )
+        panel.setFrame(frame, display: false)
+        presentationMode = .menu
+        installMenuDismissMonitors()
+
+        NSApp.activate(ignoringOtherApps: true)
+        panel.makeKeyAndOrderFront(nil)
+        panel.orderFrontRegardless()
+
+        switch router.tab {
+        case .todo:
+            router.requestInputFocus()
+        case .history:
+            router.requestSearchFocus()
+        }
+        Task {
+            await todo.refreshStats()
+            if router.tab == .history {
+                history.scheduleReload(debounce: false)
+            }
+        }
+    }
+
     func show(tab: AppRouter.Tab? = nil, focusInput: Bool = true) {
+        removeMenuDismissMonitors()
+        presentationMode = .floating
         if let tab {
             router.tab = tab
         }
@@ -99,7 +157,11 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
     }
 
     func hide() {
-        saveCurrentFrame()
+        if presentationMode == .floating {
+            saveCurrentFrame()
+        }
+        removeMenuDismissMonitors()
+        presentationMode = .floating
         panel.orderOut(nil)
     }
 
@@ -128,6 +190,7 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
     }
 
     func saveCurrentFrame() {
+        guard presentationMode == .floating else { return }
         guard panel.frame.width > 0, panel.frame.height > 0 else { return }
         if let screen = panel.screen ?? NSScreen.main {
             windowState.saveFrame(panel.frame, on: screen)
@@ -143,6 +206,39 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
         }
         panel.collectionBehavior = behavior
         panel.alphaValue = settings.opacity
+    }
+
+    // MARK: - Menu presentation
+
+    private func installMenuDismissMonitors() {
+        removeMenuDismissMonitors()
+        menuClickMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+            guard let self else { return event }
+            if event.window !== self.panel {
+                self.hide()
+            }
+            return event
+        }
+        menuResignObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.hide()
+            }
+        }
+    }
+
+    private func removeMenuDismissMonitors() {
+        if let menuClickMonitor {
+            NSEvent.removeMonitor(menuClickMonitor)
+            self.menuClickMonitor = nil
+        }
+        if let menuResignObserver {
+            NotificationCenter.default.removeObserver(menuResignObserver)
+            self.menuResignObserver = nil
+        }
     }
 
     // MARK: - Setup

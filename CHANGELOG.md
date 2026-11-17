@@ -4,6 +4,29 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] — 2026-11-17
+
+### Added
+
+- In-app online updates (Settings › 更新, menu bar › 检查更新…): checks
+  `releases/latest` on GitHub, compares semantic versions, downloads the DMG and verifies
+  SHA-256 digest from the release, bundle id/version, Developer ID team `U8U443D7ZL`,
+  designated requirement (so TCC grants survive) and Gatekeeper/notarization before installing.
+- Self-replacement helper (`Resources/update-helper.sh`): waits for the app to quit, swaps the
+  verified bundle in `/Applications` with a backup, strips quarantine and relaunches.
+  Copies outside `/Applications` are refused with a manual-download message.
+- Automatic check once per launch (toggleable), silent on failure; manual check and download
+  progress live in Settings.
+
+### Changed
+
+- Menu bar left click expands the panel as the app's own dropdown anchored under the status item
+  (Magpie-style), and dismisses on outside click; the floating panel via `⌥⇧T` keeps its saved
+  position and always-on-top behaviour.
+- 100 unit/integration tests (version comparison, release decoding, digest, service/installer
+  gating, menu placement).
+- Version 1.1.0 (build 4).
+
 ## [1.0.1] — 2026-11-17
 
 ### Changed
