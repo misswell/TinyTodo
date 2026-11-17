@@ -38,7 +38,5 @@
 	<false/>
 	<key>NSSupportsSuddenTermination</key>
 	<false/>
-	<key>SUFeedURL</key>
-	<string></string>
 </dict>
 </plist>

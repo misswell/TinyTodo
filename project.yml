@@ -49,7 +49,6 @@ targets:
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"
         ENABLE_APP_SANDBOX: NO
-        LS_UI_ELEMENT: YES
         COMBINE_HIDPI_IMAGES: YES
         SWIFT_OPTIMIZATION_LEVEL: "$(inherited)"
       configs:
