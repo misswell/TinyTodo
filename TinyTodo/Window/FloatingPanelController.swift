@@ -75,11 +75,14 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
 
     /// Menu-bar click: expand the panel as the app's own dropdown, anchored under the status item.
     func toggleFromMenuBar(anchor: NSStatusBarButton?) {
-        if panel.isVisible, panel.isKeyWindow {
+        // A panel opened by the hotkey keeps its floating position; clicking the menu bar
+        // re-anchors it under the icon instead of hiding it. Only an already menu-anchored
+        // panel toggles closed.
+        if panel.isVisible, presentationMode == .menu {
             hide()
-        } else {
-            showAsMenu(anchor: anchor)
+            return
         }
+        showAsMenu(anchor: anchor)
     }
 
     private func showAsMenu(anchor: NSStatusBarButton?) {
