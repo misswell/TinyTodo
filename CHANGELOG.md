@@ -31,8 +31,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
   undo, view-model flows, window geometry and real panel behavior.
 - XCUITest target for launch/create/complete/history/settings flows.
 - GitHub Actions workflow: build, test, DMG packaging.
-- `scripts/make_dmg.sh` to produce an installable DMG; `scripts/generate_icon.py` to rebuild
+- `scripts/release.sh` builds a Developer ID signed Release (Hardened Runtime + secure
+  timestamp, `get-task-allow` stripped); `scripts/notarize.sh` notarizes and staples both the
+  app and the DMG with the machine's verified `agentspace-notary` profile.
+- `scripts/make_dmg.sh` produces an ad-hoc developer DMG; `scripts/generate_icon.py` rebuilds
   the icon set.
+- 1.0.0 shipping DMG: Developer ID `U8U443D7ZL`, notarized (submissions
+  `dea98b04-2bf2-4a36-91d0-9fb2de1514f6`, `b0751ebc-fae2-4a7c-af18-d3dd09125e81`), stapled,
+  Gatekeeper accepted.
 
 ### Notes
 

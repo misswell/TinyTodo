@@ -103,8 +103,12 @@ xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=m
 # 单元 + 集成测试（79 个）
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' test
 
-# 打包 DMG（产物：build/TinyTodo-1.0.0.dmg）
+# 开发用 ad-hoc DMG
 bash scripts/make_dmg.sh
+
+# 正式分发：Developer ID 签名 + Apple 公证 + staple（详见 docs/RELEASE.md）
+bash scripts/release.sh
+bash scripts/notarize.sh
 ```
 
 也可以直接 `open TinyTodo.xcodeproj`，选择 TinyTodo scheme 运行。App 为 `LSUIElement`，没有 Dock 图标，从菜单栏或 `⌥⇧T` 唤出。
@@ -120,7 +124,7 @@ bash scripts/make_dmg.sh
 ### 已知限制
 
 - 1.0 不含 iCloud 同步、到期提醒、子任务、标签/项目、AI 功能（按产品范围刻意不做）。
-- DMG 使用 ad-hoc 签名，未做 Apple 公证；分发给其他机器时需在「系统设置 › 隐私与安全性」中允许打开。正式分发请替换为 Developer ID 证书并 notarize（可配合 `asc-notarization` 流程）。
+- 发布用 DMG 由 `scripts/release.sh` + `scripts/notarize.sh` 产出：Developer ID 签名、Hardened Runtime、secure timestamp，app 与 DMG 均已公证并 staple；凭据与流程见 [docs/RELEASE.md](docs/RELEASE.md)。`scripts/make_dmg.sh` 仅用于本地 ad-hoc 测试包。
 - UI 文案为中文；代码与数据格式与语言无关。
 - 内存实测 Release 构建 phys_footprint ≈ 26 MB（空闲 30 秒无增长；`ps` 的 RSS 会把共享库算进来，约 110 MB）。
 
@@ -179,7 +183,9 @@ Requires macOS 14+ and Xcode 26.
 xcodegen generate                                    # only after editing project.yml
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' build
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' test
-bash scripts/make_dmg.sh                             # build/TinyTodo-1.0.0.dmg
+bash scripts/make_dmg.sh                             # ad-hoc dev DMG
+bash scripts/release.sh                              # Developer ID signed Release
+bash scripts/notarize.sh                             # notarize + staple app and DMG
 ```
 
 Dependencies are vendored under `Vendor/` (GRDB 7.12.0, KeyboardShortcuts 3.1.0, both MIT), so the

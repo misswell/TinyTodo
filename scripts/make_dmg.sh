@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Build a Release .app and package it into a drag-to-install DMG.
+# Ad-hoc developer DMG (no Developer ID / notarization). For distribution use
+# scripts/release.sh + scripts/notarize.sh instead.
 # Usage: bash scripts/make_dmg.sh
 set -euo pipefail
 

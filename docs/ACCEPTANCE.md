@@ -65,6 +65,15 @@
 | 32 | 长时间运行无明显泄漏 | ✅ | Release 实测 `phys_footprint` 26 MB，30s 空闲无增长，CPU 0% |
 | 33 | GitHub Actions 构建与测试 | ✅ | `.github/workflows/build.yml`：Release 构建 + 测试 + DMG artifact |
 
+## 发布与公证
+
+| # | 项 | 状态 | 证据 |
+| --- | --- | --- | --- |
+| 34 | Developer ID 签名 | ✅ | `codesign -dvvv`：Authority=Developer ID Application: Guofeng Liu (U8U443D7ZL)，Timestamp 存在，Hardened Runtime |
+| 35 | App 公证 + staple | ✅ | 提交 `dea98b04-2bf2-4a36-91d0-9fb2de1514f6` Accepted；`stapler validate` 通过 |
+| 36 | DMG 公证 + staple | ✅ | DMG 以 Developer ID 签名后提交 `b0751ebc-fae2-4a7c-af18-d3dd09125e81` Accepted；`spctl --assess -t open` accepted |
+| 37 | Gatekeeper 实测 | ✅ | `spctl --assess -t execute`：accepted，source=Notarized Developer ID；DMG 内 app 启动成功 |
+
 ## 不在 v1 范围
 
 iCloud 同步、到期提醒、多级子任务、标签/项目管理、AI 功能、Sparkle 自动更新。
