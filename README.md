@@ -124,6 +124,7 @@ bash scripts/notarize.sh
 
 ### 已知限制
 
+- 1.0.x 没有更新组件：升级到 1.1.0 需要手动安装一次 DMG；从 1.1.0 起可在应用内检查并安装后续更新。
 - 1.0 不含 iCloud 同步、到期提醒、子任务、标签/项目、AI 功能（按产品范围刻意不做）。
 - 发布用 DMG 由 `scripts/release.sh` + `scripts/notarize.sh` 产出：Developer ID 签名、Hardened Runtime、secure timestamp，app 与 DMG 均已公证并 staple；凭据与流程见 [docs/RELEASE.md](docs/RELEASE.md)。`scripts/make_dmg.sh` 仅用于本地 ad-hoc 测试包。
 - UI 文案为中文；代码与数据格式与语言无关。

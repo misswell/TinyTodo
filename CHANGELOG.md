@@ -25,6 +25,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
   position and always-on-top behaviour.
 - 100 unit/integration tests (version comparison, release decoding, digest, service/installer
   gating, menu placement).
+- 1.1.0 app submission `1564f6f0-…`, DMG submission `6a787ad4-…` (Accepted), DMG SHA-256
+  `2a08b7f1…`; notarized and stapled.
 - Version 1.1.0 (build 4).
 
 ## [1.0.1] — 2026-11-17

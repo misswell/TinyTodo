@@ -84,6 +84,7 @@
 | 35 | App 公证 + staple | ✅ | 提交 `dea98b04-2bf2-4a36-91d0-9fb2de1514f6` Accepted；`stapler validate` 通过 |
 | 36 | DMG 公证 + staple | ✅ | DMG 以 Developer ID 签名后提交 `b0751ebc-fae2-4a7c-af18-d3dd09125e81` Accepted；`spctl --assess -t open` accepted |
 | 37 | Gatekeeper 实测 | ✅ | `spctl --assess -t execute`：accepted，source=Notarized Developer ID；DMG 内 app 启动成功 |
+| 44 | 1.1.0 公证 | ✅ | app 提交 `1564f6f0-aa14-491a-92bf-b98d5e01674e` Accepted；DMG 提交 `6a787ad4-110b-4b2f-8faf-4cb7f9b0600d` Accepted；DMG SHA-256 `2a08b7f1…`；下载后 `stapler validate` + `spctl` accepted |
 
 ## 不在 v1 范围
 
