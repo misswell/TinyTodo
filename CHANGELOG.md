@@ -18,6 +18,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 
 - Version 1.2.1 (build 6). Install once manually only if you are still on 1.0.x; 1.1.0+ can update
   from Settings › 更新.
+- Notarization: app `6e3d9b94-…` and DMG `f6ce46b5-…` Accepted; DMG SHA-256 `6a445e58…`.
 
 ## [1.2.0] — 2026-11-17
 

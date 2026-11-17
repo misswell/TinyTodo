@@ -83,7 +83,8 @@
 | 45 | iCloud Drive 存储与读取 | ✅ | `StorageLocation`、`StorageMigration`；设置中选择文件夹后 SQLite 落在该目录（实测 `TinyTodo.sqlite` 生成于 iCloud Drive）；`StorageTests` |
 | 46 | 切换存储不丢数据 | ✅ | 切换复制 + 冲突选择；切回本机保留带时间戳备份；`StorageMigrationTests` |
 | 47 | iCloud 单文件写入 | ✅ | iCloud 模式 `journal_mode=DELETE`、`synchronous=FULL`；`DatabaseManagerStorageTests` |
-| 48 | 菜单栏显示剩余待办数 | ✅ | `MenuBarController.badgeText`；`MenuBarBadgeTests`；设置可关闭 |
+| 48 | 菜单栏显示剩余待办数 | ✅ | `MenuBarController.badgeText`；`MenuBarBadgeTests`；设置可关闭。1.2.1 实测：2 项未完成 + 1 项已完成 → 状态栏显示 `2` |
+| 49 | 面板边距/排版 | ✅ | 顶栏 38pt 且进度独立居中、左右统一 14pt、行内 5pt 纵向留白、悬停圆角 7pt；实机截图核对 |
 
 ## 发布与公证
 
