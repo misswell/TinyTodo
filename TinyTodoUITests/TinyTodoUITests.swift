@@ -29,9 +29,11 @@ final class TinyTodoUITests: XCTestCase {
 
     func testPanelAppearsWithTabs() {
         let window = app.windows.firstMatch
+        let diagnosticPath = NSTemporaryDirectory() + "tinytodo-uitest-diagnostic.txt"
+        let diagnostic = (try? String(contentsOfFile: diagnosticPath, encoding: .utf8)) ?? "no diagnostic file"
         XCTAssertTrue(
             window.waitForExistence(timeout: 15),
-            "floating panel should appear on launch (app state: \(app.state.rawValue))"
+            "floating panel should appear on launch (app state: \(app.state.rawValue); \(diagnostic))"
         )
         XCTAssertTrue(app.buttons["tab.todo"].exists)
         XCTAssertTrue(app.buttons["tab.history"].exists)

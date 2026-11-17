@@ -80,7 +80,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private(set) var environment: AppEnvironment?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.accessory)
+        // UI tests need a regular activation policy so the accessibility tree exposes the panel.
+        NSApp.setActivationPolicy(AppInfo.isRunningUITests ? .regular : .accessory)
         NSApp.mainMenu = MainMenuBuilder.build(target: self)
 
         guard !AppInfo.isRunningUnitTests else {

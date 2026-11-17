@@ -87,6 +87,16 @@ final class AppEnvironment {
         })
 
         panelController.show(tab: .todo, focusInput: true)
+
+        if AppInfo.isRunningUITests {
+            let diagnostic = "windows=\(NSApp.windows.count) visible=\(panelController.isVisible) "
+                + "unitTests=\(AppInfo.isRunningUnitTests)"
+            try? diagnostic.write(
+                toFile: NSTemporaryDirectory() + "tinytodo-uitest-diagnostic.txt",
+                atomically: true,
+                encoding: .utf8
+            )
+        }
     }
 
     func shutdown() {

@@ -16,10 +16,10 @@ enum AppInfo {
     }
 
     static var isRunningUnitTests: Bool {
-        // Hosted unit tests inject XCTest into the app process. UI tests launch the app as a
-        // plain bundle (no XCTestCase class), and `XCTestConfigurationFilePath` may be present
-        // in both cases, so check for the framework itself.
-        NSClassFromString("XCTestCase") != nil
+        // UI tests launch the app with TINYTODO_UITEST=1 and must get a real panel.
+        // Hosted unit tests inject XCTest into the app process.
+        if isRunningUITests { return false }
+        return NSClassFromString("XCTestCase") != nil
     }
 
     static var isRunningUITests: Bool {
