@@ -43,6 +43,13 @@ await_notarization() { # <file>
   if [[ "$MODE" == "notarytool" ]]; then
     if ! out=$(xcrun notarytool submit "$file" --keychain-profile "$PROFILE" 2>&1); then
       printf '%s\n' "$out" >&2
+      # Uploads to Apple's S3 occasionally abort with deadlineExceeded while the
+      # notary API key is still valid (observed twice on 2026-11-17). The asc
+      # client streams with a configurable timeout, so retry there before failing.
+      if asc notarization list --limit 1 >/dev/null 2>&1; then
+        echo "   notarytool upload failed; retrying with asc notarization" >&2
+        ASC_UPLOAD_TIMEOUT="${ASC_UPLOAD_TIMEOUT:-10m}" asc notarization submit --file "$file" --wait --poll-interval 30s --timeout 30m && return 0
+      fi
       echo "submission of $file failed" >&2
       return 1
     fi

@@ -34,7 +34,7 @@ TinyTodo 不是 Things 3 / Todoist 那种任务管理器，而是一个随时可
 | 历史记录 | 按本地日期分组（今天 / 昨天 / 最近 7 天 / 30 天）、按月查看、搜索、每天完成数量、累计完成数、恢复到待办、删除记录 |
 | 本地存储 | SQLite + GRDB，WAL 模式，事务写入，版本化迁移，崩溃后可恢复；历史永不自动清理 |
 | 备份 | JSON 导入 / 导出（ISO-8601 时间戳），导入按 id 合并，不清空现有数据 |
-| 菜单栏 | 今日完成数、显示/隐藏、快速添加、历史、设置、退出 |
+| 菜单栏 | 左键点击展开/隐藏待办窗口，右键菜单（今日完成数、快速添加、历史、设置、退出） |
 | 全局快捷键 | 默认 `⌥⇧T`，Carbon 注册，不需要辅助功能权限；可在设置中修改并检测冲突 |
 | 设置 | 外观（跟随系统/浅色/深色）、窗口透明度、置顶、跨桌面、菜单栏计数、开机启动、快捷键、数据库位置/版本/大小、重置窗口位置 |
 
@@ -100,7 +100,7 @@ xcodegen generate
 # 构建
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' build
 
-# 单元 + 集成测试（79 个）
+# 单元 + 集成测试（82 个）
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' test
 
 # 开发用 ad-hoc DMG
@@ -117,7 +117,7 @@ bash scripts/notarize.sh
 
 ### 测试
 
-- `TinyTodoTests`：79 个单元/集成测试，覆盖创建/批量创建/并发创建、完成与撤销、排序、重命名、删除恢复、历史搜索与日期过滤、今日统计、WAL、重启持久化、v1→v3 迁移不丢数据、JSON 导入导出、按天分组（含夏令时）、撤销栈、视图模型流程、真实 `NSPanel` 的置顶/Spaces/透明度/帧持久化。
+- `TinyTodoTests`：82 个单元/集成测试，覆盖创建/批量创建/并发创建、完成与撤销、排序、重命名、删除恢复、历史搜索与日期过滤、今日统计、WAL、重启持久化、v1→v3 迁移不丢数据、JSON 导入导出、按天分组（含夏令时）、撤销栈、视图模型流程、真实 `NSPanel` 的置顶/Spaces/透明度/帧持久化。
 - `TinyTodoUITests`：XCUITest 覆盖启动出窗、输入创建、勾选完成进入历史、历史页、设置窗口、以及「自动化窗口落在非主屏」。UI-test 模式下 `TestScreenPolicy` 会把面板和设置窗口放到非主显示器，避免占用用户正在工作的屏幕。XCUITest 需要给测试运行器授予「辅助功能/自动化」权限（系统设置 › 隐私与安全性 › 辅助功能）；CI 只编译该测试包（GitHub 托管 runner 无登录 GUI 会话）。
 - GitHub Actions：`.github/workflows/build.yml` 在 `macos-latest` 上构建 Release、跑测试、打出 DMG 并上传 artifact。
 
@@ -160,7 +160,7 @@ No accounts, no network, no cloud. Everything lives in a local SQLite database.
 - **JSON export/import** with ISO-8601 timestamps; import merges by id.
 - **Global hotkey** `⌥⇧T` registered through Carbon, so no Accessibility permission is required.
   Configurable with conflict detection. `⌘N` new, `⌘F` search history, `⌘Z` undo, `⌘,` settings.
-- **Menu bar** shows today's completed count and hosts show/hide, quick add, history, settings, quit.
+- **Menu bar**: left click expands/hides the todo panel; right click (or Control-click) opens the menu with today's count, quick add, history, settings and quit.
 - **Settings**: appearance, panel opacity, always-on-top, Spaces, menu bar count, launch at login
   (`SMAppService`), hotkeys, database info, reset window position.
 
@@ -193,7 +193,7 @@ project builds offline and CI needs no package downloads.
 
 ### Testing
 
-79 unit/integration tests cover the repository, migrations (including a v1 database upgrade that
+82 unit/integration tests cover the repository, migrations (including a v1 database upgrade that
 keeps history rows), JSON import/export, day grouping (DST included), undo, view-model flows and the
 real panel's level, Spaces behavior, opacity and frame persistence. XCUITest covers launch, create,
 complete, history, settings, and that the automation window lands on a non-main display. UI tests need

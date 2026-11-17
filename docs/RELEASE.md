@@ -75,5 +75,8 @@ Release 附件必须是 **公证并 staple 过的 DMG**（本仓库的 `build/` 
 ## 环境限制
 
 - 公证需要联网访问 Apple Notary Service；`notarytool` 上传 7 MB 左右产物通常 1–3 分钟。
+- 2026-11-17 实测 `notarytool` 上传连续两次在 S3 multipart 阶段 `HTTPClientError.deadlineExceeded`，
+  而 notary API key 本身有效；脚本此时自动改用 `asc notarization submit`（`ASC_UPLOAD_TIMEOUT=10m`）
+  并成功（1.0.1 的 app 提交 `ef877872-…` 与 DMG 提交均 Accepted）。
 - 本机没有 Developer ID Installer 证书，因此不产出 `.pkg`；DMG 内是拖拽安装的 `.app`。
 - 公证不等同于 App Store 提交；LSUIElement + 本地数据库的桌面工具走直接分发。

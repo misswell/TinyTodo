@@ -1,7 +1,7 @@
 import AppKit
 
 @MainActor
-final class MenuBarController: NSObject, NSMenuDelegate {
+final class MenuBarController: NSObject {
     private let statusItem: NSStatusItem
     private let settings: SettingsStore
     private let panelController: FloatingPanelController
@@ -26,12 +26,33 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             image?.isTemplate = true
             button.image = image
             button.imagePosition = .imageLeading
-            button.toolTip = "TinyTodo · 打开待办"
+            button.toolTip = "TinyTodo · 点击展开待办，右键打开菜单"
+            button.target = self
+            button.action = #selector(handleStatusItemClick(_:))
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
-        let menu = NSMenu()
-        menu.delegate = self
-        statusItem.menu = menu
         updateBadge()
+    }
+
+    /// Left click expands the todo panel; right-click (or Control-click) opens the menu.
+    static func wantsMenu(eventType: NSEvent.EventType?, modifierFlags: NSEvent.ModifierFlags) -> Bool {
+        eventType == .rightMouseUp || modifierFlags.contains(.control)
+    }
+
+    @objc private func handleStatusItemClick(_ sender: Any?) {
+        let event = NSApp.currentEvent
+        if Self.wantsMenu(eventType: event?.type, modifierFlags: event?.modifierFlags ?? []) {
+            showMenu()
+        } else {
+            panelController.toggle()
+        }
+    }
+
+    private func showMenu() {
+        guard let button = statusItem.button else { return }
+        let menu = NSMenu()
+        rebuild(menu)
+        menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height + 2), in: button)
     }
 
     func update(todayCompleted: Int, pendingCount: Int) {
@@ -48,12 +69,6 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         } else {
             button.title = ""
         }
-    }
-
-    // MARK: - NSMenuDelegate
-
-    func menuWillOpen(_ menu: NSMenu) {
-        rebuild(menu)
     }
 
     private func rebuild(_ menu: NSMenu) {

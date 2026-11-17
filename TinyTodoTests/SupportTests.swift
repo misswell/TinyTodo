@@ -235,3 +235,18 @@ final class QuickInputCommitTests: XCTestCase {
         XCTAssertEqual(pasted, [["第一条", "第二条"]])
     }
 }
+
+@MainActor
+final class MenuBarInteractionTests: XCTestCase {
+    func testLeftClickExpandsPanel() {
+        XCTAssertFalse(MenuBarController.wantsMenu(eventType: .leftMouseUp, modifierFlags: []))
+    }
+
+    func testRightClickOpensMenu() {
+        XCTAssertTrue(MenuBarController.wantsMenu(eventType: .rightMouseUp, modifierFlags: []))
+    }
+
+    func testControlClickOpensMenu() {
+        XCTAssertTrue(MenuBarController.wantsMenu(eventType: .leftMouseUp, modifierFlags: [.control]))
+    }
+}

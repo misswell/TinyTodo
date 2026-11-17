@@ -40,7 +40,7 @@
 | --- | --- | --- | --- |
 | 18 | 全局快捷键唤出 | ✅ | Carbon `RegisterEventHotKey`（KeyboardShortcuts）；`HotKeyManager.register`；无需辅助功能权限 |
 | 19 | 快捷键可修改 | ✅ | 设置页 Recorder；Carbon 占用检测 + 系统快捷键检测 |
-| 20 | 菜单栏显示/隐藏 | ✅ | `MenuBarController`（今日完成数、显示/隐藏、快速添加、历史、设置、退出） |
+| 20 | 菜单栏显示/隐藏 | ✅ | 左键点击展开/隐藏面板（`MenuBarController` 状态项 action），右键菜单含今日完成数、快速添加、历史、设置、退出；`MenuBarInteractionTests` |
 | 21 | 登录启动 | ✅ | `SMAppService.mainApp.register/unregister`；设置页开关与状态提示 |
 | 22 | 深浅主题 | ✅ | 跟随系统/浅色/深色；语义颜色 + 图标/资产目录 |
 | 23 | 中文候选词回车不误提交 | ✅ | `hasMarkedText()` 守卫；`testReturnDoesNotCommitWhileIMEHasMarkedText` |
@@ -59,7 +59,7 @@
 
 | # | 验收项 | 状态 | 证据 |
 | --- | --- | --- | --- |
-| 29 | 核心逻辑单元测试 | ✅ | 79 个测试全部通过（`xcodebuild test`） |
+| 29 | 核心逻辑单元测试 | ✅ | 82 个测试全部通过（`xcodebuild test`） |
 | 30 | 数据库集成测试 | ✅ | `DatabaseMigrationTests`、持久化/WAL/性能测试 |
 | 31 | 关键窗口行为 UI 测试 | ✅ | XCUITest 覆盖启动/创建/完成/历史/设置/非主屏落点；UI-test 模式窗口放在非主屏（`TestScreenPolicy`）。执行需授予测试运行器辅助功能权限，CI 编译该测试包 |
 | 32 | 长时间运行无明显泄漏 | ✅ | Release 实测 `phys_footprint` 26 MB，30s 空闲无增长，CPU 0% |

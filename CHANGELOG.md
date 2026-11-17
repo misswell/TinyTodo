@@ -4,6 +4,14 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] — 2026-11-17
+
+### Changed
+
+- Menu bar icon: left click now expands/hides the todo panel so work can start immediately;
+  right click (or Control-click) opens the menu (today count, quick add, history, settings, quit).
+- 82 unit/integration tests (added menu-bar click routing tests).
+
 ## [1.0.0] — 2026-11-17
 
 ### Added
