@@ -1,0 +1,121 @@
+name: TinyTodo
+options:
+  bundleIdPrefix: app.tinytodo
+  createIntermediateGroups: true
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "26.0"
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    SWIFT_STRICT_CONCURRENCY: minimal
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: NO
+    DEAD_CODE_STRIPPING: YES
+    CLANG_ENABLE_MODULES: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+
+packages:
+  GRDB:
+    path: Vendor/GRDB.swift
+  KeyboardShortcuts:
+    path: Vendor/KeyboardShortcuts
+
+targets:
+  TinyTodo:
+    type: application
+    platform: macOS
+    sources:
+      - path: TinyTodo
+        excludes:
+          - "Resources/Info.plist"
+    dependencies:
+      - package: GRDB
+        product: GRDB
+      - package: KeyboardShortcuts
+        product: KeyboardShortcuts
+    settings:
+      base:
+        INFOPLIST_FILE: TinyTodo/Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: app.tinytodo.TinyTodo
+        PRODUCT_NAME: TinyTodo
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        ENABLE_APP_SANDBOX: NO
+        LS_UI_ELEMENT: YES
+        COMBINE_HIDPI_IMAGES: YES
+        SWIFT_OPTIMIZATION_LEVEL: "$(inherited)"
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: "DEBUG $(inherited)"
+        Release:
+          SWIFT_OPTIMIZATION_LEVEL: "-O"
+          SWIFT_COMPILATION_MODE: wholemodule
+
+  TinyTodoTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: TinyTodoTests
+    dependencies:
+      - target: TinyTodo
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.tinytodo.TinyTodoTests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/TinyTodo.app/Contents/MacOS/TinyTodo"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+
+  TinyTodoUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - path: TinyTodoUITests
+    dependencies:
+      - target: TinyTodo
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.tinytodo.TinyTodoUITests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: TinyTodo
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+
+schemes:
+  TinyTodo:
+    build:
+      targets:
+        TinyTodo: all
+        TinyTodoTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - TinyTodoTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
+  TinyTodoUITests:
+    build:
+      targets:
+        TinyTodo: all
+        TinyTodoUITests: [test]
+    test:
+      config: Debug
+      targets:
+        - TinyTodoUITests

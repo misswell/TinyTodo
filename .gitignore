@@ -1,0 +1,23 @@
+# Xcode
+build/
+DerivedData/
+*.xcresult
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+# macOS
+.DS_Store
+._*
+
+# SwiftPM
+.build/
+.swiftpm/configuration/
+
+# Local artifacts
+dist/
+*.dmg
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
