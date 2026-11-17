@@ -48,7 +48,14 @@ await_notarization() { # <file>
       # client streams with a configurable timeout, so retry there before failing.
       if asc notarization list --limit 1 >/dev/null 2>&1; then
         echo "   notarytool upload failed; retrying with asc notarization" >&2
-        ASC_UPLOAD_TIMEOUT="${ASC_UPLOAD_TIMEOUT:-10m}" asc notarization submit --file "$file" --wait --poll-interval 30s --timeout 30m && return 0
+        # On this machine S3 uploads through the local proxy stall; a direct connection
+        # completes. Set ASC_USE_PROXY=1 if a proxy is actually required.
+        if [[ "${ASC_USE_PROXY:-0}" == "1" ]]; then
+          ASC_UPLOAD_TIMEOUT="${ASC_UPLOAD_TIMEOUT:-1800s}" asc notarization submit --file "$file" --wait --poll-interval 20s --timeout 60m && return 0
+        else
+          env -u http_proxy -u https_proxy -u all_proxy -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY NO_PROXY='*' \
+            ASC_UPLOAD_TIMEOUT="${ASC_UPLOAD_TIMEOUT:-1800s}" asc notarization submit --file "$file" --wait --poll-interval 20s --timeout 60m && return 0
+        fi
       fi
       echo "submission of $file failed" >&2
       return 1
