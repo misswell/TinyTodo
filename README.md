@@ -114,7 +114,7 @@ bash scripts/make_dmg.sh
 ### 测试
 
 - `TinyTodoTests`：79 个单元/集成测试，覆盖创建/批量创建/并发创建、完成与撤销、排序、重命名、删除恢复、历史搜索与日期过滤、今日统计、WAL、重启持久化、v1→v3 迁移不丢数据、JSON 导入导出、按天分组（含夏令时）、撤销栈、视图模型流程、真实 `NSPanel` 的置顶/Spaces/透明度/帧持久化。
-- `TinyTodoUITests`：XCUITest 覆盖启动出窗、输入创建、勾选完成进入历史、历史页、设置窗口。UI 测试需要给测试运行器授予「辅助功能/自动化」权限；本地首次运行若系统弹出授权对话框，授权后重试即可。CI 中将该 job 设为 best-effort。
+- `TinyTodoUITests`：XCUITest 覆盖启动出窗、输入创建、勾选完成进入历史、历史页、设置窗口、以及「自动化窗口落在非主屏」。UI-test 模式下 `TestScreenPolicy` 会把面板和设置窗口放到非主显示器，避免占用用户正在工作的屏幕。XCUITest 需要给测试运行器授予「辅助功能/自动化」权限（系统设置 › 隐私与安全性 › 辅助功能）；CI 只编译该测试包（GitHub 托管 runner 无登录 GUI 会话）。
 - GitHub Actions：`.github/workflows/build.yml` 在 `macos-latest` 上构建 Release、跑测试、打出 DMG 并上传 artifact。
 
 ### 已知限制
@@ -190,8 +190,8 @@ project builds offline and CI needs no package downloads.
 79 unit/integration tests cover the repository, migrations (including a v1 database upgrade that
 keeps history rows), JSON import/export, day grouping (DST included), undo, view-model flows and the
 real panel's level, Spaces behavior, opacity and frame persistence. XCUITest covers launch, create,
-complete, history and settings; UI tests need automation permission for the test runner, so the CI
-job for them is best-effort.
+complete, history, settings, and that the automation window lands on a non-main display. UI tests need
+Accessibility authorization for the test runner, so CI only compiles the XCUITest bundle.
 
 ### License
 

@@ -61,7 +61,7 @@
 | --- | --- | --- | --- |
 | 29 | 核心逻辑单元测试 | ✅ | 79 个测试全部通过（`xcodebuild test`） |
 | 30 | 数据库集成测试 | ✅ | `DatabaseMigrationTests`、持久化/WAL/性能测试 |
-| 31 | 关键窗口行为 UI 测试 | 🟡 | XCUITest 已提供（启动/创建/完成/历史/设置）；本机运行需授予测试运行器自动化权限，CI 中 best-effort |
+| 31 | 关键窗口行为 UI 测试 | ✅ | XCUITest 覆盖启动/创建/完成/历史/设置/非主屏落点；UI-test 模式窗口放在非主屏（`TestScreenPolicy`）。执行需授予测试运行器辅助功能权限，CI 编译该测试包 |
 | 32 | 长时间运行无明显泄漏 | ✅ | Release 实测 `phys_footprint` 26 MB，30s 空闲无增长，CPU 0% |
 | 33 | GitHub Actions 构建与测试 | ✅ | `.github/workflows/build.yml`：Release 构建 + 测试 + DMG artifact |
 

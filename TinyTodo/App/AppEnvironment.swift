@@ -90,7 +90,10 @@ final class AppEnvironment {
 
         if AppInfo.isRunningUITests {
             let diagnostic = "windows=\(NSApp.windows.count) visible=\(panelController.isVisible) "
-                + "unitTests=\(AppInfo.isRunningUnitTests)"
+                + "unitTests=\(AppInfo.isRunningUnitTests) "
+                + "mainScreen=\(NSScreen.main?.localizedName ?? "none") "
+                + "panelScreen=\(panelController.window.screen?.localizedName ?? "none") "
+                + "testScreen=\(TestScreenPolicy.preferredScreenName)"
             try? diagnostic.write(
                 toFile: NSTemporaryDirectory() + "tinytodo-uitest-diagnostic.txt",
                 atomically: true,

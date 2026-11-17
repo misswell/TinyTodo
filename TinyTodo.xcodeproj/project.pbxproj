@@ -36,6 +36,7 @@
 		93C69E4C78EC1D9BFF649A14 /* QuickInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60097DB1C1DEF452EBCEAE87 /* QuickInputView.swift */; };
 		9A33F133775FAF458F773B3E /* UndoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184EDB6B6F8AD7A08993764 /* UndoService.swift */; };
 		9DB148D1254BF117739CF954 /* HistoryDateGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93D88EB5BF9391B890277B8A /* HistoryDateGroupView.swift */; };
+		A22E4817E1323544411D6318 /* TestScreenPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D259B251B615DFB5C562958 /* TestScreenPolicy.swift */; };
 		AE535B37D47C1056A7059C75 /* DatabaseMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F542A7D01B344A2081ADCC71 /* DatabaseMigration.swift */; };
 		B34259B3D173458DB52EA0EC /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819473BBBCE54770071608DC /* SettingsWindowController.swift */; };
 		B36F8FAC25B3CF66CEBCC459 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 8E05256B856F1502FB95DFAE /* KeyboardShortcuts */; };
@@ -92,6 +93,7 @@
 		6A044EFF67449B412A1EC535 /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
 		7402586830242EA9A938B4A1 /* QuickInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickInputBar.swift; sourceTree = "<group>"; };
 		77CC9FF09AF21DDCD3DF0D8B /* ImportExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportExportTests.swift; sourceTree = "<group>"; };
+		7D259B251B615DFB5C562958 /* TestScreenPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestScreenPolicy.swift; sourceTree = "<group>"; };
 		819473BBBCE54770071608DC /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		855FD52D6AD68FECA7DA5DDC /* VisualEffectBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectBackground.swift; sourceTree = "<group>"; };
 		8C457F12A4854B8FBBD7E29D /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
@@ -292,6 +294,7 @@
 			children = (
 				C043500D782781C03BE1B945 /* AppInfo.swift */,
 				DCE0719DCC9DABD78D395E1D /* SettingsStore.swift */,
+				7D259B251B615DFB5C562958 /* TestScreenPolicy.swift */,
 				855FD52D6AD68FECA7DA5DDC /* VisualEffectBackground.swift */,
 				48D60F184161C3E5B48F593B /* WindowDragArea.swift */,
 				BF574BE1E0DDE66988E212F3 /* WindowGeometry.swift */,
@@ -505,6 +508,7 @@
 				8B5AC055CE5FBE4EBDE080B4 /* SettingsView.swift in Sources */,
 				B34259B3D173458DB52EA0EC /* SettingsWindowController.swift in Sources */,
 				375684DDFD1CB836B5279995 /* StartupService.swift in Sources */,
+				A22E4817E1323544411D6318 /* TestScreenPolicy.swift in Sources */,
 				8739B4A0A0BDA394E744B728 /* TodoItem.swift in Sources */,
 				197A2A1362AB0264421A30A1 /* TodoRepository.swift in Sources */,
 				C002FB64555D4AF82AADCC03 /* TodoView.swift in Sources */,

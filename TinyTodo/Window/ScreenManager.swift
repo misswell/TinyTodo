@@ -44,7 +44,7 @@ final class ScreenManager {
 
         // The display the window was on is gone: fall back to the main screen, preferring a frame
         // we saved for that screen, otherwise anchor to its top-right corner.
-        guard let target = NSScreen.main ?? screens.first else { return }
+        guard let target = TestScreenPolicy.preferredScreen ?? NSScreen.main ?? screens.first else { return }
         let restored = windowState.restoreFrame(on: target)
         let size = CGSize(
             width: max(panel.frame.width, AppInfo.minimumPanelSize.width),

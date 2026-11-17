@@ -67,6 +67,7 @@ completed_at = NULL`。没有第二份历史表，因此不存在同步问题。
 
 - 单元/集成：仓储、迁移（含 v1 库升级保历史）、导入导出、日期分组（含夏令时）、撤销栈、
   视图模型流程、真实 NSPanel 行为、输入控件回车/输入法/粘贴。
-- UI：XCUITest 覆盖启动出窗、创建、完成、历史、设置；需要给测试运行器授权自动化权限。
+- UI：XCUITest 覆盖启动出窗、创建、完成、历史、设置；UI-test 模式下 `TestScreenPolicy`
+  把面板与设置窗口放到非主显示器，避免占用用户当前屏幕；执行需要给测试运行器授权辅助功能权限。
 - 性能/内存：`scripts/make_dmg.sh` 产出的 Release 构建实测 cold start ≈ 1s，
   `phys_footprint` ≈ 26 MB，空闲 CPU 0%。

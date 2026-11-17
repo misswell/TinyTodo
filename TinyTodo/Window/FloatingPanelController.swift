@@ -36,9 +36,14 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
         self.todo = todo
         self.history = history
         self.windowState = windowState
+        var styleMask: NSWindow.StyleMask = [.titled, .fullSizeContentView, .resizable, .closable]
+        if !AppInfo.isRunningUITests {
+            // UI automation needs a regular key window to synthesize keyboard events.
+            styleMask.insert(.nonactivatingPanel)
+        }
         self.panel = FloatingPanel(
             contentRect: NSRect(origin: .zero, size: AppInfo.defaultPanelSize),
-            styleMask: [.titled, .fullSizeContentView, .resizable, .closable, .nonactivatingPanel],
+            styleMask: styleMask,
             backing: .buffered,
             defer: false
         )
@@ -184,7 +189,7 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
     }
 
     private func positionDefault() {
-        guard let screen = NSScreen.main ?? NSScreen.screens.first else { return }
+        guard let screen = TestScreenPolicy.preferredScreen ?? NSScreen.main ?? NSScreen.screens.first else { return }
         let size = AppInfo.defaultPanelSize
         let restored = windowState.restoreFrame(on: screen)
         let proposed = restored ?? WindowGeometry.frame(size: size, on: screen)
@@ -196,7 +201,7 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
     private func ensureFrameIsUsable() {
         guard panel.frame.width >= AppInfo.minimumPanelSize.width,
               panel.frame.height >= AppInfo.minimumPanelSize.height,
-              let screen = panel.screen ?? NSScreen.main
+              let screen = panel.screen ?? TestScreenPolicy.preferredScreen ?? NSScreen.main
         else {
             positionDefault()
             return

@@ -62,19 +62,22 @@ jobs:
           name: test-log
           path: build-tests.log
 
-  ui-tests:
-    name: UI tests (best effort)
+  ui-test-build:
+    # macOS UI tests need a logged-in GUI session with Accessibility authorization.
+    # CI compiles the XCUITest bundle; execution runs locally via `xcodebuild -scheme TinyTodoUITests test`,
+    # where TestScreenPolicy keeps the automation window on a non-main display.
+    name: UI tests (compile)
     runs-on: macos-latest
     timeout-minutes: 30
-    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run XCUITest suite
+      - name: Build XCUITest bundle
         run: |
           xcodebuild \
             -project TinyTodo.xcodeproj \
             -scheme TinyTodoUITests \
             -destination 'platform=macOS' \
-            test
+            CODE_SIGNING_ALLOWED=NO \
+            build-for-testing

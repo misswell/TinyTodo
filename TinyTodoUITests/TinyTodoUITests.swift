@@ -1,5 +1,8 @@
 import XCTest
 
+/// End-to-end checks for the floating panel. The panel is an `NSPanel`, which macOS exposes
+/// to the accessibility layer as an `AXDialog` (not an `AXWindow`), so the tests query
+/// `app.dialogs` for the panel and `app.windows`/`app.dialogs` for the settings window.
 final class TinyTodoUITests: XCTestCase {
     private var app: XCUIApplication!
     private var databaseURL: URL!
@@ -15,6 +18,8 @@ final class TinyTodoUITests: XCTestCase {
         app.launchEnvironment["TINYTODO_UITEST"] = "1"
         app.launchEnvironment["TINYTODO_DB_PATH"] = databaseURL.path
         app.launch()
+        app.activate()
+        _ = app.wait(for: .runningForeground, timeout: 10)
     }
 
     override func tearDownWithError() throws {
@@ -27,64 +32,86 @@ final class TinyTodoUITests: XCTestCase {
         try super.tearDownWithError()
     }
 
+    private var panel: XCUIElement {
+        app.dialogs["TinyTodo"].firstMatch
+    }
+
+    private func diagnostic() -> String {
+        (try? String(contentsOfFile: NSTemporaryDirectory() + "tinytodo-uitest-diagnostic.txt", encoding: .utf8)) ?? "none"
+    }
+
     func testPanelAppearsWithTabs() {
-        let window = app.windows.firstMatch
-        let diagnosticPath = NSTemporaryDirectory() + "tinytodo-uitest-diagnostic.txt"
-        let diagnostic = (try? String(contentsOfFile: diagnosticPath, encoding: .utf8)) ?? "no diagnostic file"
-        XCTAssertTrue(
-            window.waitForExistence(timeout: 15),
-            "floating panel should appear on launch (app state: \(app.state.rawValue); \(diagnostic))"
-        )
+        XCTAssertTrue(panel.waitForExistence(timeout: 15), "floating panel should appear on launch")
         XCTAssertTrue(app.buttons["tab.todo"].exists)
         XCTAssertTrue(app.buttons["tab.history"].exists)
         XCTAssertTrue(app.buttons["header.settings"].exists)
+        XCTAssertTrue(app.buttons["header.pin"].exists)
     }
 
     func testCreateTodoWithKeyboardAndCompleteIt() {
-        let window = app.windows.firstMatch
-        XCTAssertTrue(window.waitForExistence(timeout: 10))
+        XCTAssertTrue(panel.waitForExistence(timeout: 15))
 
+        // The input field takes focus as soon as the panel is shown.
         let input = app.textViews["quick.input"].firstMatch
-        if input.exists {
-            input.click()
-            input.typeText("写一条待办")
-            input.typeText("\r")
-        } else {
-            // Fallback for accessibility variations: click the window and type.
-            window.click()
-            app.typeText("写一条待办")
-            app.typeText("\r")
-        }
+        if input.exists { input.click() }
+        app.typeText("写一条待办")
+        app.typeKey(.return, modifierFlags: [])
 
-        let row = app.otherElements["todo.row"].firstMatch
-        XCTAssertTrue(row.waitForExistence(timeout: 5), "created todo should be listed")
+        let created = app.staticTexts["写一条待办"].firstMatch
+        XCTAssertTrue(created.waitForExistence(timeout: 5), "created todo should be listed")
 
         let checkbox = app.buttons["todo.checkbox"].firstMatch
         XCTAssertTrue(checkbox.waitForExistence(timeout: 5))
         checkbox.click()
 
         app.buttons["tab.history"].click()
-        let historyRow = app.otherElements["history.row"].firstMatch
-        XCTAssertTrue(historyRow.waitForExistence(timeout: 5), "completed todo should show up in history")
+        XCTAssertTrue(
+            app.staticTexts["写一条待办"].firstMatch.waitForExistence(timeout: 5),
+            "completed todo should show up in history"
+        )
     }
 
     func testHistoryTabShowsTotal() {
-        let window = app.windows.firstMatch
-        XCTAssertTrue(window.waitForExistence(timeout: 10))
+        XCTAssertTrue(panel.waitForExistence(timeout: 15))
         app.buttons["tab.history"].click()
+
         let total = app.staticTexts["history.total"].firstMatch
         XCTAssertTrue(total.waitForExistence(timeout: 5))
         XCTAssertTrue(total.label.contains("累计完成"))
     }
 
+    /// The automation window must stay off the display the user is working on.
+    func testPanelUsesSecondaryDisplayWhenAvailable() throws {
+        XCTAssertTrue(panel.waitForExistence(timeout: 15))
+        let info = diagnostic()
+        print("DIAG \(info)")
+
+        guard NSScreen.screens.count > 1 else {
+            throw XCTSkip("only one display attached")
+        }
+        let fields = info.split(separator: " ").reduce(into: [String: String]()) { result, token in
+            let parts = token.split(separator: "=", maxSplits: 1)
+            if parts.count == 2 { result[String(parts[0])] = String(parts[1]) }
+        }
+        XCTAssertNotNil(fields["panelScreen"])
+        XCTAssertNotEqual(fields["panelScreen"], "none")
+        XCTAssertEqual(fields["panelScreen"], fields["testScreen"])
+        XCTAssertNotEqual(fields["panelScreen"], fields["mainScreen"])
+    }
+
     func testSettingsButtonOpensSettingsWindow() {
-        let window = app.windows.firstMatch
-        XCTAssertTrue(window.waitForExistence(timeout: 10))
+        XCTAssertTrue(panel.waitForExistence(timeout: 15))
         app.buttons["header.settings"].click()
-        let settingsWindow = app.windows["TinyTodo 设置"]
-        XCTAssertTrue(settingsWindow.waitForExistence(timeout: 5), "settings window should open")
-        if settingsWindow.exists {
-            settingsWindow.buttons[XCUIIdentifierCloseWindow].click()
+
+        let byWindow = app.windows["TinyTodo 设置"]
+        let byDialog = app.dialogs["TinyTodo 设置"]
+        let opened = byWindow.waitForExistence(timeout: 5) || byDialog.waitForExistence(timeout: 5)
+        XCTAssertTrue(opened, "settings window should open")
+
+        if byWindow.exists {
+            byWindow.buttons[XCUIIdentifierCloseWindow].click()
+        } else if byDialog.exists {
+            byDialog.buttons[XCUIIdentifierCloseWindow].click()
         }
     }
 }

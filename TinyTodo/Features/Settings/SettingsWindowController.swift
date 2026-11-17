@@ -28,7 +28,16 @@ final class SettingsWindowController {
         refreshStatus()
         if window == nil {
             window = makeWindow()
-            window?.center()
+            if let screen = TestScreenPolicy.preferredScreen {
+                let visible = screen.visibleFrame
+                let size = window?.frame.size ?? .zero
+                window?.setFrameOrigin(NSPoint(
+                    x: visible.midX - size.width / 2,
+                    y: visible.midY - size.height / 2
+                ))
+            } else {
+                window?.center()
+            }
         }
         NSApp.activate(ignoringOtherApps: true)
         window?.makeKeyAndOrderFront(nil)
