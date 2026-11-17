@@ -21,3 +21,6 @@ dist/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
+
+# profiling artifacts
+*.profraw
