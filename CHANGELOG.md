@@ -17,6 +17,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 ### Changed
 
 - 117 unit/integration tests (vertical centring, shared text origin across states).
+- Notarization for 1.2.2: app `38eafa7d-…` and DMG `397792a2-…` Accepted; DMG SHA-256 `e1083efa…`.
 
 ## [1.2.1] — 2026-11-17
 
