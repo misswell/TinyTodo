@@ -175,3 +175,44 @@ final class UpdateInstallerTests: XCTestCase {
         XCTAssertNotNil(Bundle.main.url(forResource: UpdateInstaller.helperScriptName, withExtension: UpdateInstaller.helperScriptExtension))
     }
 }
+
+final class UpdateBundleVerificationTests: XCTestCase {
+    private func makeBundle(version: String, bundleID: String = "app.tinytodo.TinyTodo", executable: String = "TinyTodo") throws -> URL {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("TinyTodoBundle-\(UUID().uuidString)", isDirectory: true)
+        let contents = root.appendingPathComponent("Contents", isDirectory: true)
+        try FileManager.default.createDirectory(at: contents, withIntermediateDirectories: true)
+        let plist: [String: Any] = [
+            "CFBundleIdentifier": bundleID,
+            "CFBundleExecutable": executable,
+            "CFBundleShortVersionString": version
+        ]
+        let data = try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
+        try data.write(to: contents.appendingPathComponent("Info.plist"))
+        return root
+    }
+
+    func testVersionDriftIsReportedAsVersionMismatch() throws {
+        let app = try makeBundle(version: "1.2.1")
+        defer { try? FileManager.default.removeItem(at: app) }
+        let installer = UpdateInstaller()
+        XCTAssertThrowsError(try installer.verifyBundle(at: app, expectedVersion: SemanticVersion("1.2.2")!)) { error in
+            XCTAssertEqual(error as? UpdateError, .versionMismatch)
+        }
+    }
+
+    func testWrongBundleIdentifierIsInvalidApplication() throws {
+        let app = try makeBundle(version: "1.2.2", bundleID: "com.example.other")
+        defer { try? FileManager.default.removeItem(at: app) }
+        let installer = UpdateInstaller()
+        XCTAssertThrowsError(try installer.verifyBundle(at: app, expectedVersion: SemanticVersion("1.2.2")!)) { error in
+            XCTAssertEqual(error as? UpdateError, .invalidApplication)
+        }
+    }
+
+    func testMissingBundleIsInvalidApplication() {
+        let missing = FileManager.default.temporaryDirectory.appendingPathComponent("nope-\(UUID().uuidString).app")
+        XCTAssertThrowsError(try UpdateInstaller().verifyBundle(at: missing, expectedVersion: SemanticVersion("1.2.2")!)) { error in
+            XCTAssertEqual(error as? UpdateError, .invalidApplication)
+        }
+    }
+}

@@ -75,12 +75,18 @@ struct UpdateInstaller: UpdateInstalling {
               let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
               let bundleID = plist["CFBundleIdentifier"] as? String,
               let executable = plist["CFBundleExecutable"] as? String,
-              let versionString = plist["CFBundleShortVersionString"] as? String,
               bundleID == TinyTodoIdentity.bundleIdentifier,
-              executable == TinyTodoIdentity.executableName,
-              let version = SemanticVersion(versionString),
-              version == expectedVersion else {
+              executable == TinyTodoIdentity.executableName else {
             throw UpdateError.invalidApplication
+        }
+        // Reported separately: a release whose asset carries the previous version's binary is a
+        // publishing mistake, and "not a valid app" would send the user hunting the wrong thing.
+        guard let versionString = plist["CFBundleShortVersionString"] as? String,
+              let version = SemanticVersion(versionString) else {
+            throw UpdateError.invalidApplication
+        }
+        guard version == expectedVersion else {
+            throw UpdateError.versionMismatch
         }
 
         let verify = try Command.run("/usr/bin/codesign", ["--verify", "--deep", "--strict", "--verbose=0", app.path])

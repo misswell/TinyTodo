@@ -72,7 +72,8 @@
 | 38 | 检查 GitHub 最新 Release | ✅ | `SoftwareUpdateService` + `GitHubReleaseProvider`；`SoftwareUpdateServiceTests` |
 | 39 | 版本比较与发布筛选 | ✅ | `SemanticVersionTests`、`ReleaseDecodingTests`（draft/pre-release/缺 digest/错资产名拒绝） |
 | 40 | 下载 SHA-256 校验 | ✅ | `UpdateDigestTests`；Release digest 与下载文件比对，不一致拒绝 |
-| 41 | 签名/团队/designated requirement/公证校验 | ✅ | `UpdateInstaller.verifyBundle`（bundle id、版本、codesign --deep --strict、TeamIdentifier、requirement 相同、spctl） |
+| 41 | 签名/团队/designated requirement/公证校验 | ✅ | `UpdateInstaller.verifyBundle`（bundle id、版本、codesign --deep --strict、TeamIdentifier、requirement 相同、spctl）；版本不一致单独报 `versionMismatch`（`UpdateBundleVerificationTests`） |
+| 51 | 发布产物版本一致性 | ✅ | `scripts/release.sh` 自动 `xcodegen generate` 并断言 `CFBundleShortVersionString == project.yml`；1.2.2 事故后加入 |
 | 42 | 自替换并重启 | ✅ | `Resources/update-helper.sh`（等待退出→备份→ditto→去 quarantine→直接启动）；离线 swap 测试通过 |
 | 43 | 非 /Applications 拒绝 | ✅ | `UpdateInstaller.canSelfUpdate` + `UpdateInstallerTests`；UI 提示手动下载 |
 
@@ -85,7 +86,9 @@
 | 47 | iCloud 单文件写入 | ✅ | iCloud 模式 `journal_mode=DELETE`、`synchronous=FULL`；`DatabaseManagerStorageTests` |
 | 48 | 菜单栏显示剩余待办数 | ✅ | `MenuBarController.badgeText`；`MenuBarBadgeTests`；设置可关闭。1.2.1 实测：2 项未完成 + 1 项已完成 → 状态栏显示 `2` |
 | 49 | 面板边距/排版 | ✅ | 顶栏 38pt 且进度独立居中、左右统一 14pt、行内 5pt 纵向留白、悬停圆角 7pt；实机截图核对 |
-| 50 | 输入框垂直居中 | ✅ | 占位符由同一个 `NSTextView` 绘制，共用字体/内边距/基线；实测 + 图标中心 y=810.0、占位文字中心 y=810.5（2× 像素）；`VerticalTextLayoutTests`、`QuickInputPlaceholderTests` |
+| 50 | 输入框垂直居中 | ✅ | 占位符由同一个 `NSTextView` 绘制，共用字体/内边距/基线；实机截图核对；`VerticalTextLayoutTests`、`QuickInputPlaceholderTests` |
+| 52 | 输入草稿缓存与回显 | ✅ | `QuickDraftStore`（每次变化写入 UserDefaults，提交后清除）；实测写入草稿后重启应用，输入框原样回显；`QuickDraftStoreTests` |
+| 53 | 超长输入自动换行并增高 | ✅ | 输入框最多 4 行后滚动，面板同步向下增高保持标签栏可见；实测 3 行草稿 → 面板 460→504pt；`QuickInputGrowthTests` |
 
 ## 发布与公证
 

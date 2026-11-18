@@ -7,10 +7,17 @@ import SwiftUI
 ///  - split pasted multi-line text into several todos;
 ///  - keep focus for rapid consecutive input.
 struct QuickInputField: NSViewRepresentable {
+    static let singleLineHeight: CGFloat = 22
+    static let lineHeight: CGFloat = 17
+    static let maxLines = 4
+
+    static var maxHeight: CGFloat { CGFloat(maxLines) * lineHeight + 2 }
     @Binding var text: String
     var focusToken: Int
     /// Drawn by the text view itself so it shares the typed text's baseline exactly.
     var placeholder: String
+    /// Reports the height the field needs for its current wrapping, so the bar can grow with it.
+    var onHeightChange: (CGFloat) -> Void
     var onSubmit: (String) -> Void
     var onPasteLines: ([String]) -> Void
     var onEscape: () -> Void
@@ -20,7 +27,7 @@ struct QuickInputField: NSViewRepresentable {
     }
 
     func makeNSView(context: Context) -> FocusableTextView {
-        let textView = FocusableTextView(frame: NSRect(x: 0, y: 0, width: 200, height: 20))
+        let textView = FocusableTextView(frame: NSRect(x: 0, y: 0, width: 200, height: Self.singleLineHeight))
         textView.delegate = context.coordinator
         textView.font = .systemFont(ofSize: 13)
         textView.textColor = .labelColor
@@ -28,9 +35,12 @@ struct QuickInputField: NSViewRepresentable {
         textView.drawsBackground = false
         textView.isRichText = false
         textView.importsGraphics = false
-        textView.isVerticallyResizable = false
+        // Grows with the wrapped text up to `maxLines`, then scrolls.
+        textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
-        textView.autoresizingMask = [.width, .height]
+        textView.autoresizingMask = [.width]
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.minSize = NSSize(width: 0, height: Self.singleLineHeight)
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticTextReplacementEnabled = false
@@ -41,7 +51,9 @@ struct QuickInputField: NSViewRepresentable {
         textView.textContainerInset = NSSize(width: 1, height: 4)
         textView.textContainer?.lineFragmentPadding = 0
         textView.textContainer?.widthTracksTextView = true
-        textView.textContainer?.maximumNumberOfLines = 1
+        textView.textContainer?.maximumNumberOfLines = 0
+        textView.textContainer?.heightTracksTextView = false
+        textView.maxVisibleLines = Self.maxLines
         textView.placeholderText = placeholder
         textView.placeholderColor = .placeholderTextColor
         textView.centersSingleLineVertically = true
@@ -63,6 +75,9 @@ struct QuickInputField: NSViewRepresentable {
     func updateNSView(_ textView: FocusableTextView, context: Context) {
         context.coordinator.parent = self
         textView.placeholderText = placeholder
+        textView.onHeightChange = { [weak coordinator = context.coordinator] height in
+            coordinator?.reportHeight(height)
+        }
         if !textView.hasMarkedText(), textView.string != text {
             textView.string = text
         }
@@ -80,6 +95,7 @@ struct QuickInputField: NSViewRepresentable {
         var parent: QuickInputField
         weak var textView: FocusableTextView?
         var lastFocusToken: Int = 0
+        private var lastReportedHeight: CGFloat = 0
 
         init(parent: QuickInputField) {
             self.parent = parent
@@ -90,6 +106,13 @@ struct QuickInputField: NSViewRepresentable {
             if parent.text != textView.string {
                 parent.text = textView.string
             }
+            (textView as? FocusableTextView)?.recalculateHeight()
+        }
+
+        func reportHeight(_ height: CGFloat) {
+            guard abs(height - lastReportedHeight) > 0.5 else { return }
+            lastReportedHeight = height
+            parent.onHeightChange(height)
         }
 
         func handleCommit(_ raw: String) {
@@ -112,6 +135,7 @@ struct QuickInputField: NSViewRepresentable {
         func clear() {
             parent.text = ""
             textView?.string = ""
+            (textView as? FocusableTextView)?.recalculateHeight()
             if let textView, let window = textView.window {
                 window.makeFirstResponder(textView)
             }
@@ -142,20 +166,54 @@ final class FocusableTextView: NSTextView {
         didSet { updateVerticalInset() }
     }
 
+    /// Upper bound for the auto-growing field; beyond it the text view scrolls.
+    var maxVisibleLines = 4
+    var onHeightChange: ((CGFloat) -> Void)?
+
     override var string: String {
-        didSet { needsDisplay = true }
+        didSet {
+            needsDisplay = true
+            recalculateHeight()
+        }
     }
 
     override func layout() {
         super.layout()
         updateVerticalInset()
+        recalculateHeight()
     }
 
     private func updateVerticalInset() {
         guard centersSingleLineVertically, let font else { return }
-        let inset = VerticalTextLayout.insetY(containerHeight: bounds.height, lineHeight: lineHeight(for: font))
+        let single = lineHeight(for: font)
+        // Only a single line is centred; wrapped text starts at the top, otherwise the whole block
+        // drifts down as the container grows and the field stops lining up with the icon beside it.
+        let isSingleLine = (layoutManager?.usedRect(for: textContainer ?? NSTextContainer()).height ?? single) <= single + 0.5
+        let inset = isSingleLine
+            ? VerticalTextLayout.insetY(containerHeight: bounds.height, lineHeight: single)
+            : 3
         if textContainerInset.height != inset {
             textContainerInset = NSSize(width: textContainerInset.width, height: inset)
+        }
+    }
+
+    /// Height needed for the current wrapping, clamped to the single-line and `maxVisibleLines` bounds.
+    func requiredHeight() -> CGFloat {
+        guard let layoutManager, let textContainer else { return QuickInputField.singleLineHeight }
+        layoutManager.ensureLayout(for: textContainer)
+        let used = layoutManager.usedRect(for: textContainer).height
+        let lineHeight = lineHeight(for: font ?? .systemFont(ofSize: 13))
+        let raw = used + textContainerInset.height * 2
+        let minimum = QuickInputField.singleLineHeight
+        let maximum = max(CGFloat(maxVisibleLines) * lineHeight + 2, minimum)
+        return min(max(raw.rounded(.up), minimum), maximum)
+    }
+
+    func recalculateHeight() {
+        guard bounds.width > 0 else { return }
+        let height = requiredHeight()
+        if abs(height - bounds.height) > 0.5 {
+            onHeightChange?(height)
         }
     }
 

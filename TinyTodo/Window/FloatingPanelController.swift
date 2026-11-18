@@ -30,6 +30,7 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
     }
 
     private var presentationMode: PresentationMode = .floating
+    private var quickInputObserver: NSObjectProtocol?
     private var menuClickMonitor: Any?
     private var menuResignObserver: NSObjectProtocol?
 
@@ -64,6 +65,16 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
         positionDefault()
         screenManager.attach(to: panel) { [weak self] in
             self?.saveCurrentFrame()
+        }
+        quickInputObserver = NotificationCenter.default.addObserver(
+            forName: QuickInputHeightRelay.notification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
+            MainActor.assumeIsolated {
+                guard let delta = note.userInfo?[QuickInputHeightRelay.deltaKey] as? CGFloat else { return }
+                self?.growForQuickInput(delta: delta)
+            }
         }
     }
 
@@ -190,6 +201,22 @@ final class FloatingPanelController: NSObject, NSWindowDelegate {
         if panel.isVisible {
             panel.makeKeyAndOrderFront(nil)
         }
+    }
+
+    /// Keeps the panel's top edge fixed and extends it downward by `delta`, bounded by the screen.
+    private func growForQuickInput(delta: CGFloat) {
+        var frame = panel.frame
+        let screen = panel.screen ?? NSScreen.main
+        let limit: CGFloat = 620
+        let newHeight = min(max(frame.height + delta, panel.minSize.height), limit)
+        let appliedDelta = newHeight - frame.height
+        guard abs(appliedDelta) > 0.5 else { return }
+        frame.origin.y -= appliedDelta
+        frame.size.height = newHeight
+        if let screen {
+            frame = WindowGeometry.clamped(frame, to: screen, minSize: panel.minSize)
+        }
+        panel.setFrame(frame, display: true)
     }
 
     func saveCurrentFrame() {

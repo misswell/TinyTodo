@@ -9,7 +9,8 @@ struct PanelRootView: View {
     var onOpenSettings: () -> Void
     var onHide: () -> Void
 
-    @State private var inputText: String = ""
+    /// Restored on launch so a half-typed todo survives quitting or a crash.
+    @State private var inputText: String = QuickDraftStore.shared.load()
     private let minuteTick = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -26,6 +27,7 @@ struct PanelRootView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .layoutPriority(0)
 
             if router.tab == .todo {
                 Divider().opacity(0.35)
@@ -67,6 +69,9 @@ struct PanelRootView: View {
             if newValue == .history {
                 history.scheduleReload(debounce: false)
             }
+        }
+        .onChange(of: inputText) { _, newValue in
+            QuickDraftStore.shared.flush(newValue)
         }
         .onReceive(minuteTick) { _ in
             Task { await todo.refreshStats() }

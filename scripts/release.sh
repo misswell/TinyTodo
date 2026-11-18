@@ -20,6 +20,12 @@ STAGE="$BUILD_DIR/dmg-stage"
 APP="$PRODUCTS/TinyTodo.app"
 DMG="$BUILD_DIR/TinyTodo-$VERSION.dmg"
 
+echo "==> 0. Regenerate the Xcode project so project.yml is the only version source"
+# Editing MARKETING_VERSION in project.yml without regenerating leaves the previous version
+# compiled into the bundle: 1.2.2 shipped a "1.2.1" binary that way, and the update client
+# correctly refused it.
+command -v xcodegen >/dev/null 2>&1 && xcodegen generate --spec "$ROOT/project.yml" >/dev/null
+
 echo "==> 1. Release build with Developer ID"
 rm -rf "$PRODUCTS" "$STAGE" "$DMG"
 mkdir -p "$PRODUCTS"
@@ -41,6 +47,15 @@ xcodebuild \
 SRC="$BUILD_DIR/DerivedData/Build/Products/Release/TinyTodo.app"
 [[ -d "$SRC" ]] || { echo "build product missing: $SRC" >&2; exit 1; }
 cp -R "$SRC" "$APP"
+
+echo "==> 1b. The bundle must declare the version this script is about to publish"
+SHIPPED_VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist" 2>/dev/null)"
+if [ "$SHIPPED_VERSION" != "$VERSION" ]; then
+  echo "version drift: project.yml says $VERSION but the built bundle says ${SHIPPED_VERSION:-<none>}" >&2
+  echo "run 'xcodegen generate' and rebuild" >&2
+  exit 1
+fi
+echo "  ok  bundle reports $SHIPPED_VERSION"
 
 echo "==> 2. Verify the signature"
 codesign --verify --strict --verbose=2 "$APP"

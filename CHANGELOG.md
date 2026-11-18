@@ -4,6 +4,30 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.3] — 2026-11-18
+
+### Fixed
+
+- The 1.2.2 DMG shipped a **1.2.1** binary: `project.yml` was bumped without running
+  `xcodegen generate`, so the old `MARKETING_VERSION` stayed in the project file and the update
+  client refused the asset. Fixed at the root:
+  `scripts/release.sh` now regenerates the project itself and aborts when the built bundle's
+  `CFBundleShortVersionString` differs from `project.yml`.
+- `UpdateInstaller.verifyBundle` reports a version mismatch as `versionMismatch` (with a hint about
+  the release build) instead of the misleading "not a valid TinyTodo.app".
+
+### Added
+
+- Quick-input draft persistence: whatever is half-typed is written to `UserDefaults` on every
+  change and restored on launch, so hiding the panel, quitting, or a crash never loses it. It is
+  cleared only when the todo is actually submitted.
+- The quick-input field wraps and grows up to 4 lines (then scrolls); the panel extends downward by
+  the same amount so the tab bar stays visible, and the `+` icon stays beside the first line.
+
+### Changed
+
+- 127 unit/integration tests (bundle verification, draft persistence, field growth/cap).
+
 ## [1.2.2] — 2026-11-18
 
 ### Fixed

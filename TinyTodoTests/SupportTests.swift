@@ -341,3 +341,82 @@ final class QuickInputPlaceholderTests: XCTestCase {
         XCTAssertEqual(view.textContainerInset.height, VerticalTextLayout.insetY(containerHeight: 22, lineHeight: lineHeight), accuracy: 0.001)
     }
 }
+
+@MainActor
+final class QuickDraftStoreTests: XCTestCase {
+    private var defaults: UserDefaults!
+    private var suite: String!
+
+    override func setUpWithError() throws {
+        suite = "TinyTodoDraftTests-\(UUID().uuidString)"
+        defaults = UserDefaults(suiteName: suite)
+        defaults.removePersistentDomain(forName: suite)
+    }
+
+    override func tearDownWithError() throws {
+        defaults.removePersistentDomain(forName: suite)
+    }
+
+    func testFlushPersistsDraftForNextLaunch() {
+        let store = QuickDraftStore(defaults: defaults)
+        store.flush("写到一半的待办")
+        XCTAssertEqual(QuickDraftStore(defaults: defaults).load(), "写到一半的待办")
+    }
+
+    func testFlushWithEmptyTextClearsDraft() {
+        let store = QuickDraftStore(defaults: defaults)
+        store.flush("临时草稿")
+        store.flush("")
+        XCTAssertEqual(QuickDraftStore(defaults: defaults).load(), "")
+    }
+
+    func testDebouncedSaveWritesAfterThePause() async throws {
+        let store = QuickDraftStore(defaults: defaults, debounce: .milliseconds(30))
+        store.scheduleSave("被打断的输入")
+        XCTAssertEqual(store.load(), "", "should not write on every keystroke")
+        try await Task.sleep(for: .milliseconds(200))
+        XCTAssertEqual(store.load(), "被打断的输入")
+    }
+
+    func testScheduleSaveWithEmptyTextRemovesDraftImmediately() {
+        let store = QuickDraftStore(defaults: defaults)
+        store.flush("x")
+        store.scheduleSave("")
+        XCTAssertEqual(store.load(), "")
+    }
+}
+
+@MainActor
+final class QuickInputGrowthTests: XCTestCase {
+    private func makeField(width: CGFloat = 240) -> FocusableTextView {
+        let view = FocusableTextView(frame: NSRect(x: 0, y: 0, width: width, height: QuickInputField.singleLineHeight))
+        view.font = .systemFont(ofSize: 13)
+        view.isRichText = false
+        view.textContainerInset = NSSize(width: 1, height: 3)
+        view.textContainer?.lineFragmentPadding = 0
+        view.textContainer?.widthTracksTextView = true
+        view.textContainer?.maximumNumberOfLines = 0
+        view.centersSingleLineVertically = true
+        view.maxVisibleLines = QuickInputField.maxLines
+        return view
+    }
+
+    func testShortTextKeepsSingleLineHeight() {
+        let view = makeField()
+        view.string = "短"
+        XCTAssertEqual(view.requiredHeight(), QuickInputField.singleLineHeight, accuracy: 0.5)
+    }
+
+    func testLongTextGrowsPastSingleLine() {
+        let view = makeField(width: 140)
+        view.string = String(repeating: "很长的待办内容 ", count: 12)
+        XCTAssertGreaterThan(view.requiredHeight(), QuickInputField.singleLineHeight)
+    }
+
+    func testGrowthIsCappedAtMaxLines() {
+        let view = makeField(width: 120)
+        view.string = String(repeating: "很长 ", count: 200)
+        let cap = CGFloat(QuickInputField.maxLines) * QuickInputField.lineHeight + 2
+        XCTAssertLessThanOrEqual(view.requiredHeight(), cap + 0.5)
+    }
+}

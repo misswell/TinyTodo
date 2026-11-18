@@ -29,6 +29,7 @@ struct TodoView: View {
         .scrollContentBackground(.hidden)
         .environment(\.defaultMinListRowHeight, 28)
         .padding(.top, 4)
+        .frame(minHeight: 0, maxHeight: .infinity)
         .accessibilityIdentifier("todo.list")
     }
 

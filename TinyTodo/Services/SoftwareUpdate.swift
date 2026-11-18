@@ -107,7 +107,7 @@ enum UpdateError: LocalizedError, Equatable {
         case .missingVerifiedArchive: return "Release 中没有带 SHA-256 的 DMG 安装包"
         case .digestMismatch: return "下载文件的 SHA-256 与 GitHub 记录不一致"
         case .invalidApplication: return "安装包不是有效的 TinyTodo.app"
-        case .versionMismatch: return "安装包版本与 Release 标签不一致"
+        case .versionMismatch: return "安装包版本与 Release 标签不一致（发布时可能没有重新生成工程）"
         case .invalidSignature: return "安装包签名校验失败"
         case .wrongDeveloperTeam: return "安装包不是 Developer ID（U8U443D7ZL）签名"
         case .gatekeeperRejected: return "安装包未通过 Gatekeeper/公证校验"

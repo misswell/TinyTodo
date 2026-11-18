@@ -63,6 +63,15 @@ spctl --assess --type open --context context:primary-signature build/TinyTodo-1.
 
 **发版完成的判据**：`releases/latest` 必须已经返回新 tag，并且该资产带本次构建的 digest；发布后下载一次附件核对 SHA-256。
 
+## 版本与产物一致性
+
+`scripts/release.sh` 自己执行 `xcodegen generate`，并在签名前断言构建产物
+`CFBundleShortVersionString` 与 `project.yml` 的 `MARKETING_VERSION` 相同；不一致直接失败。
+
+这条规则来自一次真实事故：1.2.2 只改了 `project.yml` 没有重新生成工程，打出来的 DMG 里
+`CFBundleShortVersionString` 仍是 1.2.1，应用内更新校验因此拒绝安装（错误信息已改为更明确的
+`versionMismatch`）。
+
 ## 版本号
 
 `project.yml` 的 `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` 是唯一来源，

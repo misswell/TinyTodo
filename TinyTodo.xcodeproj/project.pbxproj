@@ -30,6 +30,7 @@
 		63EE085A4FEF4D1E4179EEDD /* TodoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F51DCC77D134DFC3FE1D18E /* TodoViewModel.swift */; };
 		77FF747BB6E3961576B3E08E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08E92147E4D0A95B94929360 /* Assets.xcassets */; };
 		81416CA01CFD06862B48E5EC /* FloatingPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F545BFE41158187CC0A5C8 /* FloatingPanelTests.swift */; };
+		82F4E5A21ECDEAA16CF55911 /* QuickDraftStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54144061FCEA11ECBA353BF5 /* QuickDraftStore.swift */; };
 		8739B4A0A0BDA394E744B728 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D2282680EEFC8BC12C9DD5 /* TodoItem.swift */; };
 		89C4639CDA07D875B9EA3D33 /* UndoServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B376B0BA6C963F930C8073 /* UndoServiceTests.swift */; };
 		8B5AC055CE5FBE4EBDE080B4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC33227770817893D9C0398C /* SettingsView.swift */; };
@@ -56,6 +57,7 @@
 		DA1C000FFDAC6495656209B0 /* SemanticVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB2ACB3AC0088E06D0F71B4 /* SemanticVersion.swift */; };
 		DBAEF077EF91ABDAA0A313B1 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4696F0E4C842A14CFFCB6AE6 /* DatabaseManager.swift */; };
 		DE22FFA9EADB943A2C14AEAF /* HistoryGroupingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F4D4043B105B19C8B4BFA3 /* HistoryGroupingTests.swift */; };
+		DE5A51EA9A167CE270E06236 /* QuickInputHeightRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F7572A2ADB1E9C3D304DFC /* QuickInputHeightRelay.swift */; };
 		E5CCD2E2F99AE99F905A66EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F3902BEC5673CD5A103247 /* AppDelegate.swift */; };
 		E621132DF44B3A4897D82624 /* HotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF276D9CE88671C37059CA8 /* HotKeyManager.swift */; };
 		EF369E9CFB1F7A5CF5C73CCB /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E678BD8BF0354E8564E59ABF /* main.swift */; };
@@ -93,6 +95,7 @@
 		29E91A5BCD89D643B976184C /* StorageLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageLocation.swift; sourceTree = "<group>"; };
 		2A609249563F819577278118 /* HistoryGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryGrouping.swift; sourceTree = "<group>"; };
 		2FCD38725924F86D69146829 /* UpdateInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateInstaller.swift; sourceTree = "<group>"; };
+		38F7572A2ADB1E9C3D304DFC /* QuickInputHeightRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickInputHeightRelay.swift; sourceTree = "<group>"; };
 		3DCE7FFDF536C60086975C9F /* HotKeyNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyNames.swift; sourceTree = "<group>"; };
 		3E91E2EDEBC286196F9CBDAB /* TodoRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoRepository.swift; sourceTree = "<group>"; };
 		40C510319095BDAD531E8425 /* WindowStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowStateManager.swift; sourceTree = "<group>"; };
@@ -100,6 +103,7 @@
 		48D60F184161C3E5B48F593B /* WindowDragArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDragArea.swift; sourceTree = "<group>"; };
 		4B87E29D7024A2C7920A97FA /* FloatingPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelController.swift; sourceTree = "<group>"; };
 		4E5D10B19D4FD48E50B41811 /* PanelChromeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelChromeViews.swift; sourceTree = "<group>"; };
+		54144061FCEA11ECBA353BF5 /* QuickDraftStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickDraftStore.swift; sourceTree = "<group>"; };
 		569D59FF31B3E729C33EAFFA /* TodoRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoRepositoryTests.swift; sourceTree = "<group>"; };
 		57F9427F1F563520D3DA65AB /* MenuPanelPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPanelPlacement.swift; sourceTree = "<group>"; };
 		60097DB1C1DEF452EBCEAE87 /* QuickInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickInputView.swift; sourceTree = "<group>"; };
@@ -314,6 +318,7 @@
 			children = (
 				C043500D782781C03BE1B945 /* AppInfo.swift */,
 				57F9427F1F563520D3DA65AB /* MenuPanelPlacement.swift */,
+				38F7572A2ADB1E9C3D304DFC /* QuickInputHeightRelay.swift */,
 				DCE0719DCC9DABD78D395E1D /* SettingsStore.swift */,
 				7D259B251B615DFB5C562958 /* TestScreenPolicy.swift */,
 				E6EEA768DEC836006AF5EA1C /* VerticalTextLayout.swift */,
@@ -340,6 +345,7 @@
 			isa = PBXGroup;
 			children = (
 				B00E23C1001143FA35736ABF /* ImportExportService.swift */,
+				54144061FCEA11ECBA353BF5 /* QuickDraftStore.swift */,
 				DDB2ACB3AC0088E06D0F71B4 /* SemanticVersion.swift */,
 				E3895C217A84384922D299CD /* SoftwareUpdate.swift */,
 				93EFA5CB61AD30FE4B659FF9 /* StartupService.swift */,
@@ -530,7 +536,9 @@
 				014117C1416841A94D757B6C /* MenuPanelPlacement.swift in Sources */,
 				CED803E926B974308F7A096E /* PanelChromeViews.swift in Sources */,
 				CB682A0904959527DB90765C /* PanelRootView.swift in Sources */,
+				82F4E5A21ECDEAA16CF55911 /* QuickDraftStore.swift in Sources */,
 				2DA5E9065F29995B76A1652D /* QuickInputBar.swift in Sources */,
+				DE5A51EA9A167CE270E06236 /* QuickInputHeightRelay.swift in Sources */,
 				93C69E4C78EC1D9BFF649A14 /* QuickInputView.swift in Sources */,
 				08436E3CA9129B9225B81FBB /* ScreenManager.swift in Sources */,
 				DA1C000FFDAC6495656209B0 /* SemanticVersion.swift in Sources */,
@@ -604,7 +612,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = TinyTodo/Resources/Info.plist;
@@ -612,7 +620,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = macosx;
@@ -798,14 +806,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_APP_SANDBOX = NO;
 				INFOPLIST_FILE = TinyTodo/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = macosx;
