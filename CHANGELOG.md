@@ -27,6 +27,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 ### Changed
 
 - 127 unit/integration tests (bundle verification, draft persistence, field growth/cap).
+- Notarization for 1.2.3: app `4011e48b-…` and DMG `0bc8a66a-…` Accepted; DMG SHA-256 `f818b9c3…`.
 
 ## [1.2.2] — 2026-11-18
 
