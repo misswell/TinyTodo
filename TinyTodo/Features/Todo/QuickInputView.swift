@@ -9,6 +9,8 @@ import SwiftUI
 struct QuickInputField: NSViewRepresentable {
     @Binding var text: String
     var focusToken: Int
+    /// Drawn by the text view itself so it shares the typed text's baseline exactly.
+    var placeholder: String
     var onSubmit: (String) -> Void
     var onPasteLines: ([String]) -> Void
     var onEscape: () -> Void
@@ -40,6 +42,9 @@ struct QuickInputField: NSViewRepresentable {
         textView.textContainer?.lineFragmentPadding = 0
         textView.textContainer?.widthTracksTextView = true
         textView.textContainer?.maximumNumberOfLines = 1
+        textView.placeholderText = placeholder
+        textView.placeholderColor = .placeholderTextColor
+        textView.centersSingleLineVertically = true
         textView.string = text
         textView.onCommit = { [weak coordinator = context.coordinator] value in
             coordinator?.handleCommit(value)
@@ -57,6 +62,7 @@ struct QuickInputField: NSViewRepresentable {
 
     func updateNSView(_ textView: FocusableTextView, context: Context) {
         context.coordinator.parent = self
+        textView.placeholderText = placeholder
         if !textView.hasMarkedText(), textView.string != text {
             textView.string = text
         }
@@ -114,10 +120,67 @@ struct QuickInputField: NSViewRepresentable {
 }
 
 /// `NSTextView` subclass with explicit Return/Enter handling.
+///
+/// The placeholder lives here rather than in a SwiftUI `Text` overlay: two separate layout
+/// systems cannot keep one baseline, which is exactly how the placeholder ended up sitting a
+/// couple of points below the typed text.
 final class FocusableTextView: NSTextView {
     var onCommit: ((String) -> Void)?
     var onPasteLines: (([String]) -> Void)?
     var onEscape: (() -> Void)?
+
+    var placeholderText: String = "" {
+        didSet { if oldValue != placeholderText { needsDisplay = true } }
+    }
+
+    var placeholderColor: NSColor = .placeholderTextColor {
+        didSet { needsDisplay = true }
+    }
+
+    /// Keeps a single line centred when the view is taller than the line.
+    var centersSingleLineVertically = false {
+        didSet { updateVerticalInset() }
+    }
+
+    override var string: String {
+        didSet { needsDisplay = true }
+    }
+
+    override func layout() {
+        super.layout()
+        updateVerticalInset()
+    }
+
+    private func updateVerticalInset() {
+        guard centersSingleLineVertically, let font else { return }
+        let inset = VerticalTextLayout.insetY(containerHeight: bounds.height, lineHeight: lineHeight(for: font))
+        if textContainerInset.height != inset {
+            textContainerInset = NSSize(width: textContainerInset.width, height: inset)
+        }
+    }
+
+    private func lineHeight(for font: NSFont) -> CGFloat {
+        let layoutManager = NSLayoutManager()
+        return layoutManager.defaultLineHeight(for: font)
+    }
+
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+        guard string.isEmpty, !hasMarkedText(), !placeholderText.isEmpty else { return }
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font ?? NSFont.systemFont(ofSize: 13),
+            .foregroundColor: placeholderColor
+        ]
+        let origin = textContainerOrigin
+        let available = NSRect(
+            x: origin.x,
+            y: origin.y,
+            width: max(bounds.width - origin.x - textContainerInset.width, 0),
+            height: max(bounds.height - origin.y, 0)
+        )
+        (placeholderText as NSString).draw(in: available, withAttributes: attributes)
+    }
 
     override func insertNewline(_ sender: Any?) {
         // Pinyin: Return confirms the candidate while composition is active.

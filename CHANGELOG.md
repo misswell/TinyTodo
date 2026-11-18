@@ -4,6 +4,20 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.2] — 2026-11-18
+
+### Fixed
+
+- Quick-input placeholder no longer sits below the typed text. The placeholder is now drawn by the
+  same `NSTextView` as the input, so both share one font (13 pt), one `textContainerInset` and one
+  baseline; measured on screen: plus icon centre y=810.0, placeholder centre y=810.5 (2× pixels).
+- The single line is centred by `VerticalTextLayout.insetY(containerHeight:lineHeight:)` instead of
+  a hardcoded 4 pt inset, so a taller/shorter field stays centred.
+
+### Changed
+
+- 117 unit/integration tests (vertical centring, shared text origin across states).
+
 ## [1.2.1] — 2026-11-17
 
 ### Changed

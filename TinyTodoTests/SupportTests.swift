@@ -286,3 +286,58 @@ final class MenuBarBadgeTests: XCTestCase {
         XCTAssertEqual(MenuBarController.badgeText(pendingCount: 5, enabled: false), "")
     }
 }
+
+final class VerticalTextLayoutTests: XCTestCase {
+    func testCentresLineInsideTallerContainer() {
+        XCTAssertEqual(VerticalTextLayout.insetY(containerHeight: 22, lineHeight: 16), 3)
+        XCTAssertEqual(VerticalTextLayout.insetY(containerHeight: 20, lineHeight: 16), 2)
+    }
+
+    func testNeverNegativeWhenLineIsTallerThanContainer() {
+        XCTAssertEqual(VerticalTextLayout.insetY(containerHeight: 10, lineHeight: 16), 0)
+        XCTAssertEqual(VerticalTextLayout.insetY(containerHeight: 0, lineHeight: 16), 0)
+        XCTAssertEqual(VerticalTextLayout.insetY(containerHeight: 22, lineHeight: 0), 0)
+    }
+
+    func testRoundsToWholePoints() {
+        XCTAssertEqual(VerticalTextLayout.insetY(containerHeight: 23, lineHeight: 16), 4)
+    }
+}
+
+@MainActor
+final class QuickInputPlaceholderTests: XCTestCase {
+    private func makeField() -> FocusableTextView {
+        let view = FocusableTextView(frame: NSRect(x: 0, y: 0, width: 240, height: QuickInputBar.fieldHeight))
+        view.font = .systemFont(ofSize: 13)
+        view.isRichText = false
+        view.centersSingleLineVertically = true
+        view.placeholderText = QuickInputBar.placeholder
+        return view
+    }
+
+    func testPlaceholderAndTypedTextShareTheSameTextOrigin() {
+        let view = makeField()
+        view.layoutSubtreeIfNeeded()
+        let emptyOrigin = view.textContainerOrigin
+
+        view.string = "写一条待办"
+        view.layoutSubtreeIfNeeded()
+        XCTAssertEqual(view.textContainerOrigin.y, emptyOrigin.y, accuracy: 0.001,
+                       "typing must not shift the text baseline")
+    }
+
+    func testPlaceholderIsHiddenOnceTheUserTypes() {
+        let view = makeField()
+        XCTAssertTrue(view.string.isEmpty)
+        view.string = "a"
+        XCTAssertFalse(view.string.isEmpty)
+    }
+
+    func testVerticalInsetCentresTheLine() {
+        let view = makeField()
+        view.frame = NSRect(x: 0, y: 0, width: 240, height: 22)
+        view.layoutSubtreeIfNeeded()
+        let lineHeight = NSLayoutManager().defaultLineHeight(for: view.font!)
+        XCTAssertEqual(view.textContainerInset.height, VerticalTextLayout.insetY(containerHeight: 22, lineHeight: lineHeight), accuracy: 0.001)
+    }
+}

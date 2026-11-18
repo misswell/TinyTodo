@@ -15,6 +15,7 @@
 		1B88F806D8C39E5C4F899323 /* SupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC2F8D93F588C0FEDF88F93 /* SupportTests.swift */; };
 		2144D8EB1055874953DD4A6C /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 463A14205C962D5A14E60782 /* GRDB */; };
 		24600804556012C3473C8FAC /* FloatingPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B87E29D7024A2C7920A97FA /* FloatingPanelController.swift */; };
+		260D9C69C14F495EAA23A76F /* VerticalTextLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6EEA768DEC836006AF5EA1C /* VerticalTextLayout.swift */; };
 		2DA5E9065F29995B76A1652D /* QuickInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7402586830242EA9A938B4A1 /* QuickInputBar.swift */; };
 		2EC3B46AFF634A29E12D5E01 /* ImportExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00E23C1001143FA35736ABF /* ImportExportService.swift */; };
 		33CD2B174C06FB75E0B9A92E /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF46BCDDB7A844874274732E /* AppEnvironment.swift */; };
@@ -135,6 +136,7 @@
 		E0F3902BEC5673CD5A103247 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E3895C217A84384922D299CD /* SoftwareUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftwareUpdate.swift; sourceTree = "<group>"; };
 		E678BD8BF0354E8564E59ABF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		E6EEA768DEC836006AF5EA1C /* VerticalTextLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalTextLayout.swift; sourceTree = "<group>"; };
 		F184EDB6B6F8AD7A08993764 /* UndoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoService.swift; sourceTree = "<group>"; };
 		F1D2282680EEFC8BC12C9DD5 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
 		F4B376B0BA6C963F930C8073 /* UndoServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoServiceTests.swift; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 				57F9427F1F563520D3DA65AB /* MenuPanelPlacement.swift */,
 				DCE0719DCC9DABD78D395E1D /* SettingsStore.swift */,
 				7D259B251B615DFB5C562958 /* TestScreenPolicy.swift */,
+				E6EEA768DEC836006AF5EA1C /* VerticalTextLayout.swift */,
 				855FD52D6AD68FECA7DA5DDC /* VisualEffectBackground.swift */,
 				48D60F184161C3E5B48F593B /* WindowDragArea.swift */,
 				BF574BE1E0DDE66988E212F3 /* WindowGeometry.swift */,
@@ -544,6 +547,7 @@
 				63EE085A4FEF4D1E4179EEDD /* TodoViewModel.swift in Sources */,
 				9A33F133775FAF458F773B3E /* UndoService.swift in Sources */,
 				B397097B626A79E1EDC517F4 /* UpdateInstaller.swift in Sources */,
+				260D9C69C14F495EAA23A76F /* VerticalTextLayout.swift in Sources */,
 				45951D7C91D06570936895CD /* VisualEffectBackground.swift in Sources */,
 				BCCB4ECC485515A9973884BC /* WindowDragArea.swift in Sources */,
 				93484DB79FFD45288D9C297E /* WindowGeometry.swift in Sources */,
@@ -600,7 +604,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = TinyTodo/Resources/Info.plist;
@@ -608,7 +612,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = macosx;
@@ -794,14 +798,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				ENABLE_APP_SANDBOX = NO;
 				INFOPLIST_FILE = TinyTodo/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = macosx;

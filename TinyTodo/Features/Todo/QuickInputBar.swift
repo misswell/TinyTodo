@@ -7,32 +7,28 @@ struct QuickInputBar: View {
     var onSubmitLines: ([String]) -> Void
     var onEscape: () -> Void
 
+    static let placeholder = "添加一个待办，按 Enter 保存…"
+    static let fieldHeight: CGFloat = 22
+
     var body: some View {
         HStack(alignment: .center, spacing: 9) {
             Image(systemName: "plus.circle.fill")
                 .font(.system(size: 13.5, weight: .regular))
                 .foregroundStyle(Color.accentColor.opacity(0.85))
 
-            ZStack(alignment: .leading) {
-                if text.isEmpty {
-                    Text("添加一个待办，按 Enter 保存…")
-                        .font(.system(size: 12.5))
-                        .foregroundStyle(.tertiary)
-                        .allowsHitTesting(false)
-                }
-                QuickInputField(
-                    text: $text,
-                    focusToken: focusToken,
-                    onSubmit: onSubmit,
-                    onPasteLines: onSubmitLines,
-                    onEscape: onEscape
-                )
-                .frame(maxWidth: .infinity, minHeight: 20, maxHeight: 20)
-                .accessibilityIdentifier("quick.input")
-            }
+            QuickInputField(
+                text: $text,
+                focusToken: focusToken,
+                placeholder: Self.placeholder,
+                onSubmit: onSubmit,
+                onPasteLines: onSubmitLines,
+                onEscape: onEscape
+            )
+            .frame(maxWidth: .infinity, minHeight: Self.fieldHeight, maxHeight: Self.fieldHeight)
+            .accessibilityIdentifier("quick.input")
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 10)
+        .padding(.vertical, 9)
         .background(Color.primary.opacity(0.035))
     }
 }
