@@ -20,6 +20,7 @@ Milestone: TinyTodo now ships a Mac app and an iOS app from one codebase.
 ### Changed
 
 - macOS 1.3.0 (build 10); iOS 1.0.0 (build 1).
+- Notarization for 1.3.0: app `46199d48-…`, DMG `b40b45b4-…` Accepted; DMG SHA-256 `d242ccc2…`.
 
 ## [1.2.4] — 2026-11-19
 
