@@ -99,6 +99,23 @@ CREATE TABLE todos (
 
 历史记录不是另一份数据，而是 `status = 1` 的同一批行，因此不存在待办与历史不同步的问题。迁移只增不改：v1 建表与索引，v2 增加搜索索引，v3 增加待办排序索引，升级不触碰任何历史行。
 
+### iOS 端
+
+`TinyTodoIOS` 是同一仓库里的 iOS App（iOS 17+），与 Mac 共用 `Shared/` 里的模型、数据库与备份格式：
+
+- 待办按创建日期分组（今天 / 昨天 / 更早）、单行快速记录、历史搜索、左滑恢复、右滑删除。
+- 同步走 iCloud Drive：设置 › 同步里用系统文件选择器选一次与 Mac 相同的 `TinyTodo` 文件夹，
+  iOS 用 security-scoped bookmark 长期访问该目录；文件被 iCloud 替换后切回前台会自动重开数据库。
+- 也可以只用本机存储，随时在两种模式间切换。
+
+```bash
+xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodoIOS \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
+```
+
+> 在模拟器构建需要先安装 iOS 平台组件（Xcode › Settings › Components，或
+> `xcodebuild -downloadPlatform iOS`）。当前仓库未提供 iOS 安装包：App Store 分发需要单独的应用记录与审核。
+
 ### 构建
 
 要求：macOS 14+、Xcode 26（Swift 6.3 编译器）。

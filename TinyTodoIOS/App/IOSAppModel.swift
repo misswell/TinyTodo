@@ -22,8 +22,9 @@ final class IOSAppModel {
     let folderAccess: ICloudFolderAccess
     private var lastKnownModification: Date?
 
-    init(folderAccess: ICloudFolderAccess = ICloudFolderAccess()) {
-        self.folderAccess = folderAccess
+    @MainActor
+    init(folderAccess: ICloudFolderAccess? = nil) {
+        self.folderAccess = folderAccess ?? ICloudFolderAccess()
         openStorage()
     }
 

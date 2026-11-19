@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		014117C1416841A94D757B6C /* MenuPanelPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F9427F1F563520D3DA65AB /* MenuPanelPlacement.swift */; };
+		06821A09AA5F2B608DB7D454 /* IOSSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C38F8BC0C7ED89C625346A8 /* IOSSettingsView.swift */; };
 		08436E3CA9129B9225B81FBB /* ScreenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD34A376BAA87B32CB61574 /* ScreenManager.swift */; };
 		0E1B26937533EF56CAB5F4DE /* DatabaseMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C642448D36D36EA5D6D8917E /* DatabaseMigrationTests.swift */; };
 		0F5E5CE42BEC89FED19AE6D2 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE0719DCC9DABD78D395E1D /* SettingsStore.swift */; };
@@ -118,6 +119,7 @@
 		2E3B4C72D0E1C8E52B3B3A12 /* TinyTodoIOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinyTodoIOSApp.swift; sourceTree = "<group>"; };
 		2FCD38725924F86D69146829 /* UpdateInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateInstaller.swift; sourceTree = "<group>"; };
 		38F7572A2ADB1E9C3D304DFC /* QuickInputHeightRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickInputHeightRelay.swift; sourceTree = "<group>"; };
+		3C38F8BC0C7ED89C625346A8 /* IOSSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSSettingsView.swift; sourceTree = "<group>"; };
 		3DCE7FFDF536C60086975C9F /* HotKeyNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyNames.swift; sourceTree = "<group>"; };
 		40C510319095BDAD531E8425 /* WindowStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowStateManager.swift; sourceTree = "<group>"; };
 		4104AB908429813C5E23E14E /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
@@ -411,6 +413,14 @@
 			path = Database;
 			sourceTree = "<group>";
 		};
+		BAC64E72C0420CCD038B3172 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				3C38F8BC0C7ED89C625346A8 /* IOSSettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		BBC1CAAD7D7E826EC1FB4372 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -448,6 +458,7 @@
 			isa = PBXGroup;
 			children = (
 				6A667266CB693E2422883BEA /* History */,
+				BAC64E72C0420CCD038B3172 /* Settings */,
 				F711051AE8C1EA4F82E44A6F /* Todo */,
 			);
 			path = Features;
@@ -734,6 +745,7 @@
 				B099D15DBBF03804AD7F3312 /* IOSAppModel.swift in Sources */,
 				B33D72DC9E943E1676AEAECD /* IOSHistoryView.swift in Sources */,
 				34140CBAF20AACFAB62545A2 /* IOSRootView.swift in Sources */,
+				06821A09AA5F2B608DB7D454 /* IOSSettingsView.swift in Sources */,
 				7B7922B38C0E2EEE03883EA4 /* IOSTodoView.swift in Sources */,
 				442D3821BF88A93A500A379D /* PendingGrouping.swift in Sources */,
 				FBA7D05840339A64380655EB /* StorageLocation.swift in Sources */,

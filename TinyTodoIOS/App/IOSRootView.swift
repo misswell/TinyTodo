@@ -7,42 +7,38 @@ struct IOSRootView: View {
     enum Tab: Hashable {
         case todo
         case history
+        case settings
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                switch tab {
-                case .todo:
-                    IOSTodoView()
-                case .history:
-                    IOSHistoryView()
-                }
+        TabView(selection: $tab) {
+            NavigationStack {
+                IOSTodoView()
+                    .navigationTitle("TinyTodo")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .safeAreaInset(edge: .bottom) { IOSQuickAddBar() }
             }
-            .safeAreaInset(edge: .bottom) {
-                if tab == .todo {
-                    IOSQuickAddBar()
-                }
+            .tabItem { Label("待办", systemImage: "list.bullet") }
+            .tag(Tab.todo)
+
+            NavigationStack {
+                IOSHistoryView()
+                    .navigationTitle("历史")
+                    .navigationBarTitleDisplayMode(.inline)
             }
-            .navigationTitle("TinyTodo")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Picker("", selection: $tab) {
-                        Text("待办").tag(Tab.todo)
-                        Text("历史").tag(Tab.history)
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(width: 150)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        IOSSettingsView()
-                    } label: {
-                        Image(systemName: "gearshape")
-                    }
-                }
+            .tabItem { Label("历史", systemImage: "clock") }
+            .tag(Tab.history)
+
+            NavigationStack {
+                IOSSettingsView()
+                    .navigationTitle("设置")
+                    .navigationBarTitleDisplayMode(.inline)
             }
+            .tabItem { Label("设置", systemImage: "gearshape") }
+            .tag(Tab.settings)
+        }
+        .onChange(of: tab) { _, _ in
+            model.reloadIfFileChanged()
         }
     }
 }

@@ -12,7 +12,7 @@ final class ICloudFolderAccess {
     private let defaults: UserDefaults
     private var accessingURL: URL?
 
-    init(defaults: UserDefaults = .standard) {
+    nonisolated init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
     }
 
