@@ -89,6 +89,10 @@
 | 50 | 输入框垂直居中 | ✅ | 占位符由同一个 `NSTextView` 绘制，共用字体/内边距/基线；实机截图核对；`VerticalTextLayoutTests`、`QuickInputPlaceholderTests` |
 | 52 | 输入草稿缓存与回显 | ✅ | `QuickDraftStore`（每次变化写入 UserDefaults，提交后清除）；实测写入草稿后重启应用，输入框原样回显；`QuickDraftStoreTests` |
 | 53 | 超长输入自动换行并增高 | ✅ | 输入框最多 4 行后滚动，面板同步向下增高保持标签栏可见；实测 3 行草稿 → 面板 460→504pt；`QuickInputGrowthTests` |
+| 54 | 待办按日期分组 | ✅ | `PendingGrouping` + `TodoView` 分组渲染；实测 3 个日期组正确显示；`PendingGroupingTests`（分组、跨天排序保持） |
+| 55 | iOS 端构建与运行 | ✅ | `TinyTodoIOS` 在 iPhone 17 Pro（iOS 26.5 模拟器）构建通过并启动；待办日期分组、底部输入栏、三个 Tab 均实机截图核对 |
+| 56 | iOS 与 Mac 共用数据层 | ✅ | 同一份 `Shared/` 源码编入两个 target；数据层/备份逻辑由 macOS 套件 130 个测试覆盖 |
+| 57 | iOS iCloud Drive 文件夹 | 🟡 | `ICloudFolderAccess` 走 security-scoped bookmark，模拟器无法连接真实 iCloud 账户，未做端到端验证 |
 
 ## 发布与公证
 

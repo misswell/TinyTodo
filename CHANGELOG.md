@@ -21,6 +21,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 ### Changed
 
 - 130 unit/integration tests (pending day grouping, reordering within a section).
+- iOS has no separate test target on purpose: the data layer is the same `Shared/` source covered by
+  the macOS suite, and the simulator test runner hangs on this machine
+  ("test runner hung before establishing connection") after several resets, so the target was removed
+  rather than shipped broken.
 - macOS version 1.2.4 (build 9); iOS 1.0.0 (build 1).
 - Notarization for 1.2.4: DMG `22708995-…` Accepted; DMG SHA-256 `da46b358…`.
 

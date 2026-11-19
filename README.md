@@ -115,6 +115,10 @@ xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodoIOS \
 
 > 在模拟器构建需要先安装 iOS 平台组件（Xcode › Settings › Components，或
 > `xcodebuild -downloadPlatform iOS`）。当前仓库未提供 iOS 安装包：App Store 分发需要单独的应用记录与审核。
+>
+> iOS 端目前没有独立的测试 target：数据层是同一份 `Shared/` 源码，由 macOS 套件的 130 个测试覆盖；
+> 本机模拟器上 XCUITest/单元测试运行器会卡在 "test runner hung before establishing connection"，
+> 因此没有把会卡住的测试配置留在工程里。
 
 ### 构建
 

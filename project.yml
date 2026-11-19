@@ -144,6 +144,13 @@ schemes:
     archive:
       config: Release
 
+  TinyTodoIOS:
+    build:
+      targets:
+        TinyTodoIOS: all
+    run:
+      config: Debug
+
   TinyTodoUITests:
     build:
       targets:
