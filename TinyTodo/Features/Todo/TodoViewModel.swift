@@ -25,6 +25,8 @@ final class TodoViewModel {
     private var toastTask: Task<Void, Never>?
 
     private(set) var items: [TodoItem] = []
+    /// Pending todos grouped by creation day, refreshed whenever `items` changes.
+    private(set) var sections: [PendingSection] = []
     private(set) var stats = TodayStats()
     private(set) var toast: Toast?
 
@@ -42,6 +44,7 @@ final class TodoViewModel {
             MainActor.assumeIsolated {
                 guard let self else { return }
                 self.items = items
+                self.sections = PendingGrouping.sections(from: items)
                 self.onItemsChanged?(items)
             }
         }
@@ -67,6 +70,7 @@ final class TodoViewModel {
     func bootstrap() async {
         do {
             items = try await repository.reloadPending()
+            sections = PendingGrouping.sections(from: items)
             await refreshStats()
         } catch {
             presentError(error)
@@ -188,6 +192,29 @@ final class TodoViewModel {
                     if lhs.sortOrder == rhs.sortOrder { return lhs.createdAt < rhs.createdAt }
                     return lhs.sortOrder < rhs.sortOrder
                 }
+            }
+        }
+    }
+
+    /// Drag inside one day group: the row range is re-ordered, then the whole pending order is saved.
+    func move(section: PendingSection, fromOffsets source: IndexSet, toOffset destination: Int) {
+        let order = PendingGrouping.reordering(
+            items: items,
+            sectionItems: section.items,
+            fromOffsets: source,
+            toOffset: destination
+        )
+        guard order != items.map(\.id) else { return }
+        let previousOrder = items.map(\.id)
+        let byID = Dictionary(uniqueKeysWithValues: items.map { ($0.id, $0) })
+        items = order.compactMap { byID[$0] }
+        sections = PendingGrouping.sections(from: items)
+        Task {
+            do {
+                try await repository.reorder(pendingIDs: order)
+                undoService.push(.reorder(previousOrder: previousOrder), label: "调整任务顺序")
+            } catch {
+                presentError(error)
             }
         }
     }

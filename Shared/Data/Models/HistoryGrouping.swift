@@ -11,30 +11,11 @@ struct HistoryDaySection: Identifiable, Equatable, Sendable {
     var count: Int { items.count }
 
     var title: String {
-        let day = calendar.startOfDay(for: id)
-        let today = calendar.startOfDay(for: now)
-        if day == today {
-            return "今天 · \(Self.dayString(day, calendar: calendar))"
-        }
-        if let yesterday = calendar.date(byAdding: .day, value: -1, to: today), day == yesterday {
-            return "昨天 · \(Self.dayString(day, calendar: calendar))"
-        }
-        let sameYear = calendar.component(.year, from: day) == calendar.component(.year, from: now)
-        let formatter = DateFormatter()
-        formatter.locale = .autoupdatingCurrent
-        formatter.calendar = calendar
-        formatter.timeZone = calendar.timeZone
-        formatter.dateFormat = sameYear ? "M月d日 EEEE" : "yyyy年M月d日 EEEE"
-        return formatter.string(from: day)
+        DayLabel.title(for: id, calendar: calendar, now: now)
     }
 
     static func dayString(_ date: Date, calendar: Calendar) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = .autoupdatingCurrent
-        formatter.calendar = calendar
-        formatter.timeZone = calendar.timeZone
-        formatter.dateFormat = "M月d日"
-        return formatter.string(from: date)
+        DayLabel.shortDate(date, calendar: calendar)
     }
 }
 

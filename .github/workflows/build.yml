@@ -62,6 +62,24 @@ jobs:
           name: test-log
           path: build-tests.log
 
+  ios-build:
+    name: iOS build
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build iOS app
+        run: |
+          xcodebuild \
+            -project TinyTodo.xcodeproj \
+            -scheme TinyTodoIOS \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
   ui-test-build:
     # macOS UI tests need a logged-in GUI session with Accessibility authorization.
     # CI compiles the XCUITest bundle; execution runs locally via `xcodebuild -scheme TinyTodoUITests test`,

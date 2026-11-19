@@ -23,8 +23,8 @@ final class DatabaseManager {
     let fileURL: URL
     let storageMode: StorageMode
     let dbQueue: DatabaseQueue
-    private let logger = Logger(subsystem: AppInfo.subsystem, category: "database")
-    private static let bootstrapLogger = Logger(subsystem: AppInfo.subsystem, category: "database")
+    private let logger = Logger(subsystem: TinyTodoCoreInfo.subsystem, category: "database")
+    private static let bootstrapLogger = Logger(subsystem: TinyTodoCoreInfo.subsystem, category: "database")
 
     static var defaultDirectoryURL: URL {
         let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first

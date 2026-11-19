@@ -15,14 +15,30 @@ struct TodoView: View {
 
     private var list: some View {
         List {
-            ForEach(model.items) { item in
-                TodoRowView(item: item, isEditing: model.editingID == item.id)
-                    .listRowInsets(EdgeInsets(top: 2, leading: 12, bottom: 2, trailing: 12))
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-            }
-            .onMove { source, destination in
-                model.move(fromOffsets: source, toOffset: destination)
+            ForEach(model.sections) { section in
+                Section {
+                    ForEach(section.items) { item in
+                        TodoRowView(item: item, isEditing: model.editingID == item.id)
+                            .listRowInsets(EdgeInsets(top: 2, leading: 12, bottom: 2, trailing: 12))
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                    }
+                    .onMove { source, destination in
+                        model.move(section: section, fromOffsets: source, toOffset: destination)
+                    }
+                } header: {
+                    HStack(spacing: 6) {
+                        Text(section.title)
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(.secondary)
+                        Text("\(section.items.count) 项")
+                            .font(.system(size: 9.5).monospacedDigit())
+                            .foregroundStyle(.tertiary)
+                        Spacer(minLength: 0)
+                    }
+                    .padding(.top, 2)
+                    .accessibilityIdentifier("todo.section")
+                }
             }
         }
         .listStyle(.plain)

@@ -4,6 +4,25 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.4] — 2026-11-19
+
+### Added
+
+- Pending todos are grouped by the day they were created (今天 / 昨天 / earlier dates), matching the
+  history page's rhythm. Dragging still reorders inside a day; the other days keep their place.
+- iOS app target (`TinyTodoIOS`): pending list with day groups, one-line capture, history search,
+  swipe actions, and the same SQLite schema; the data layer is now shared by both apps under
+  `Shared/`.
+- iOS reaches the Mac's iCloud Drive folder through a security-scoped bookmark, chosen once in
+  Settings › 同步, with a local fallback and a reload when iCloud replaces the file underneath.
+- JSON backup format moved to `Shared/Services/BackupCodec.swift` so both platforms read/write the
+  same file.
+
+### Changed
+
+- 130 unit/integration tests (pending day grouping, reordering within a section).
+- macOS version 1.2.4 (build 9); iOS 1.0.0 (build 1).
+
 ## [1.2.3] — 2026-11-18
 
 ### Fixed

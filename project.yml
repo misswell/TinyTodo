@@ -4,6 +4,7 @@ options:
   createIntermediateGroups: true
   deploymentTarget:
     macOS: "14.0"
+    iOS: "17.0"
   xcodeVersion: "26.0"
   groupSortPosition: top
 
@@ -34,6 +35,7 @@ targets:
       - path: TinyTodo
         excludes:
           - "Resources/Info.plist"
+      - path: Shared
     dependencies:
       - package: GRDB
         product: GRDB
@@ -46,8 +48,8 @@ targets:
         PRODUCT_NAME: TinyTodo
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
-        MARKETING_VERSION: "1.2.3"
-        CURRENT_PROJECT_VERSION: "8"
+        MARKETING_VERSION: "1.2.4"
+        CURRENT_PROJECT_VERSION: "9"
         ENABLE_APP_SANDBOX: NO
         COMBINE_HIDPI_IMAGES: YES
         SWIFT_OPTIMIZATION_LEVEL: "$(inherited)"
@@ -59,6 +61,37 @@ targets:
           SWIFT_COMPILATION_MODE: wholemodule
           ENABLE_HARDENED_RUNTIME: YES
           CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
+
+  TinyTodoIOS:
+    type: application
+    platform: iOS
+    sources:
+      - path: TinyTodoIOS
+        excludes:
+          - "Resources/Info.plist"
+      - path: Shared
+    dependencies:
+      - package: GRDB
+        product: GRDB
+    settings:
+      base:
+        INFOPLIST_FILE: TinyTodoIOS/Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: app.tinytodo.TinyTodo.iOS
+        PRODUCT_NAME: TinyTodo
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "Apple Development"
+        DEVELOPMENT_TEAM: U8U443D7ZL
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: "DEBUG $(inherited)"
+        Release:
+          SWIFT_OPTIMIZATION_LEVEL: "-O"
+          SWIFT_COMPILATION_MODE: wholemodule
 
   TinyTodoTests:
     type: bundle.unit-test

@@ -88,3 +88,67 @@ final class HistoryGroupingTests: XCTestCase {
         XCTAssertEqual(options.first?.count, 1)
     }
 }
+
+final class PendingGroupingTests: XCTestCase {
+    private func calendar(_ tz: String) -> Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: tz)!
+        calendar.locale = Locale(identifier: "zh_CN")
+        return calendar
+    }
+
+    private func pending(_ title: String, created: Date, order: Int = 0) -> TodoItem {
+        TodoItem(title: title, status: .pending, createdAt: created, updatedAt: created, sortOrder: order)
+    }
+
+    func testGroupsByCreationDayNewestFirst() {
+        let cal = calendar("Asia/Shanghai")
+        let now = cal.date(from: DateComponents(year: 2026, month: 11, day: 19, hour: 10))!
+        let today = cal.startOfDay(for: now)
+        let yesterday = cal.date(byAdding: .day, value: -1, to: today)!
+        let older = cal.date(byAdding: .day, value: -5, to: today)!
+
+        let items = [
+            pending("今天 A", created: today.addingTimeInterval(3_600), order: 0),
+            pending("今天 B", created: today.addingTimeInterval(7_200), order: 1),
+            pending("昨天", created: yesterday.addingTimeInterval(7_200), order: 2),
+            pending("更早", created: older.addingTimeInterval(3_600), order: 3)
+        ]
+        let sections = PendingGrouping.sections(from: items, calendar: cal, now: now)
+        XCTAssertEqual(sections.count, 3)
+        XCTAssertEqual(sections.map { $0.items.count }, [2, 1, 1])
+        XCTAssertEqual(sections[0].items.map(\.title), ["今天 A", "今天 B"])
+        XCTAssertTrue(sections[0].title.hasPrefix("今天 · 11月19日"))
+        XCTAssertTrue(sections[1].title.hasPrefix("昨天 · 11月18日"))
+    }
+
+    func testCompletedItemsAreNotListed() {
+        let cal = calendar("Asia/Shanghai")
+        let now = Date()
+        let done = TodoItem(title: "已完成", status: .completed, createdAt: now, completedAt: now)
+        XCTAssertTrue(PendingGrouping.sections(from: [done], calendar: cal, now: now).isEmpty)
+    }
+
+    func testReorderingKeepsOtherDaysInPlace() {
+        let cal = calendar("Asia/Shanghai")
+        let now = cal.date(from: DateComponents(year: 2026, month: 11, day: 19, hour: 10))!
+        let today = cal.startOfDay(for: now)
+        let yesterday = cal.date(byAdding: .day, value: -1, to: today)!
+
+        let items = [
+            pending("今天 A", created: today, order: 0),
+            pending("今天 B", created: today, order: 1),
+            pending("今天 C", created: today, order: 2),
+            pending("昨天 X", created: yesterday, order: 3)
+        ]
+        let sections = PendingGrouping.sections(from: items, calendar: cal, now: now)
+        let order = PendingGrouping.reordering(
+            items: items,
+            sectionItems: sections[0].items,
+            fromOffsets: IndexSet(integer: 0),
+            toOffset: 3
+        )
+        let titles = order.compactMap { id in items.first { $0.id == id }?.title }
+        XCTAssertEqual(titles, ["今天 B", "今天 C", "今天 A", "昨天 X"])
+    }
+}

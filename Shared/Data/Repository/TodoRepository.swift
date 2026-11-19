@@ -40,7 +40,7 @@ final class TodoRepository: @unchecked Sendable {
     let dbQueue: DatabaseQueue
     private var pendingObservers: [([TodoItem]) -> Void] = []
     private var pendingObservation: AnyDatabaseCancellable?
-    private let logger = Logger(subsystem: AppInfo.subsystem, category: "repository")
+    private let logger = Logger(subsystem: TinyTodoCoreInfo.subsystem, category: "repository")
 
     init(dbQueue: DatabaseQueue) {
         self.dbQueue = dbQueue
