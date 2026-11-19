@@ -22,6 +22,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 
 - 130 unit/integration tests (pending day grouping, reordering within a section).
 - macOS version 1.2.4 (build 9); iOS 1.0.0 (build 1).
+- Notarization for 1.2.4: DMG `22708995-…` Accepted; DMG SHA-256 `da46b358…`.
 
 ## [1.2.3] — 2026-11-18
 
