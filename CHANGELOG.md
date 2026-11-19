@@ -4,6 +4,23 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] — 2026-11-19
+
+Milestone: TinyTodo now ships a Mac app and an iOS app from one codebase.
+
+### Added
+
+- iOS app (`TinyTodoIOS`, iOS 17+) in the same Xcode project and repository: day-grouped pending
+  list, one-line capture, history search, swipe to restore/delete, settings with iCloud Drive folder
+  selection (security-scoped bookmark) and local fallback.
+- `Shared/` holds the model, GRDB database, repository, day grouping and JSON backup codec compiled
+  into both apps, so the two platforms share one schema and one file format.
+- macOS build and CI now compile the shared sources; CI gained an `ios-build` job.
+
+### Changed
+
+- macOS 1.3.0 (build 10); iOS 1.0.0 (build 1).
+
 ## [1.2.4] — 2026-11-19
 
 ### Added
