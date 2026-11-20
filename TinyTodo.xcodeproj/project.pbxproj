@@ -53,6 +53,7 @@
 		9A33F133775FAF458F773B3E /* UndoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184EDB6B6F8AD7A08993764 /* UndoService.swift */; };
 		9D738D8C775D1C3AE2D318AA /* StorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6828EE7E2D6AFBE7077A1C3D /* StorageTests.swift */; };
 		9DB148D1254BF117739CF954 /* HistoryDateGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93D88EB5BF9391B890277B8A /* HistoryDateGroupView.swift */; };
+		9EA9ED2DF44EAF4B9A2778B1 /* PanelLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D8F7E97668B123486A5FDC /* PanelLayout.swift */; };
 		A22E4817E1323544411D6318 /* TestScreenPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D259B251B615DFB5C562958 /* TestScreenPolicy.swift */; };
 		A5382D3FD79D0C1C8B0893B9 /* StorageLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CBF2438E9141102661ACD6 /* StorageLocation.swift */; };
 		B099D15DBBF03804AD7F3312 /* IOSAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64516CACDE814032D5BABD79 /* IOSAppModel.swift */; };
@@ -83,6 +84,7 @@
 		F5AC56F68EB96E134BC824FD /* DatabaseMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCDB776EFEFEFE79C4DBB939 /* DatabaseMigration.swift */; };
 		F69A65AA832CC1B77FC258C5 /* TodoViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E3FF53605D95390EE85DB7 /* TodoViewModelTests.swift */; };
 		F69B442BB4A37996FA6EEB5C /* TinyTodoCoreInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B255EFB4704B85772D1EFD63 /* TinyTodoCoreInfo.swift */; };
+		F6DCFDD64E8DECAF9FAC9D74 /* PanelLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F735A70798C2CA6F3F5BEE14 /* PanelLayoutTests.swift */; };
 		F94D4A4D7B4571AE6D0FDBAE /* update-helper.sh in Resources */ = {isa = PBXBuildFile; fileRef = 75FA85C7395F2FA9D6A5AE9C /* update-helper.sh */; };
 		FB8046EE770576E74189DCCD /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE01564BD01363ADCA060628 /* HistoryView.swift */; };
 		FBA7D05840339A64380655EB /* StorageLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CBF2438E9141102661ACD6 /* StorageLocation.swift */; };
@@ -147,6 +149,7 @@
 		8C457F12A4854B8FBBD7E29D /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
 		93D88EB5BF9391B890277B8A /* HistoryDateGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDateGroupView.swift; sourceTree = "<group>"; };
 		93EFA5CB61AD30FE4B659FF9 /* StartupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupService.swift; sourceTree = "<group>"; };
+		94D8F7E97668B123486A5FDC /* PanelLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelLayout.swift; sourceTree = "<group>"; };
 		9BA38ECC3422B2ABAADBA953 /* IOSTodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSTodoView.swift; sourceTree = "<group>"; };
 		9BF979D1A781F836ED30C969 /* TinyTodo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TinyTodo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F51DCC77D134DFC3FE1D18E /* TodoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoViewModel.swift; sourceTree = "<group>"; };
@@ -178,6 +181,7 @@
 		F184EDB6B6F8AD7A08993764 /* UndoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoService.swift; sourceTree = "<group>"; };
 		F4B376B0BA6C963F930C8073 /* UndoServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoServiceTests.swift; sourceTree = "<group>"; };
 		F61CC6734421F5A038764A8D /* TinyTodoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TinyTodoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F735A70798C2CA6F3F5BEE14 /* PanelLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelLayoutTests.swift; sourceTree = "<group>"; };
 		F9B56B07690540F248046FBA /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		FCDB776EFEFEFE79C4DBB939 /* DatabaseMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigration.swift; sourceTree = "<group>"; };
 		FE01564BD01363ADCA060628 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
@@ -254,6 +258,7 @@
 				D0F545BFE41158187CC0A5C8 /* FloatingPanelTests.swift */,
 				14F4D4043B105B19C8B4BFA3 /* HistoryGroupingTests.swift */,
 				77CC9FF09AF21DDCD3DF0D8B /* ImportExportTests.swift */,
+				F735A70798C2CA6F3F5BEE14 /* PanelLayoutTests.swift */,
 				239A556ACAEDCAE5D881E88C /* SoftwareUpdateTests.swift */,
 				6828EE7E2D6AFBE7077A1C3D /* StorageTests.swift */,
 				DDC2F8D93F588C0FEDF88F93 /* SupportTests.swift */,
@@ -443,6 +448,7 @@
 			children = (
 				C043500D782781C03BE1B945 /* AppInfo.swift */,
 				57F9427F1F563520D3DA65AB /* MenuPanelPlacement.swift */,
+				94D8F7E97668B123486A5FDC /* PanelLayout.swift */,
 				38F7572A2ADB1E9C3D304DFC /* QuickInputHeightRelay.swift */,
 				DCE0719DCC9DABD78D395E1D /* SettingsStore.swift */,
 				7D259B251B615DFB5C562958 /* TestScreenPolicy.swift */,
@@ -702,6 +708,7 @@
 				3593777265EF4BF45CB8C91E /* MenuBarController.swift in Sources */,
 				014117C1416841A94D757B6C /* MenuPanelPlacement.swift in Sources */,
 				CED803E926B974308F7A096E /* PanelChromeViews.swift in Sources */,
+				9EA9ED2DF44EAF4B9A2778B1 /* PanelLayout.swift in Sources */,
 				CB682A0904959527DB90765C /* PanelRootView.swift in Sources */,
 				CA8F57DF495FCF7B3B9D6E1B /* PendingGrouping.swift in Sources */,
 				82F4E5A21ECDEAA16CF55911 /* QuickDraftStore.swift in Sources */,
@@ -764,6 +771,7 @@
 				81416CA01CFD06862B48E5EC /* FloatingPanelTests.swift in Sources */,
 				DE22FFA9EADB943A2C14AEAF /* HistoryGroupingTests.swift in Sources */,
 				CCA80C4DF49328EE48827907 /* ImportExportTests.swift in Sources */,
+				F6DCFDD64E8DECAF9FAC9D74 /* PanelLayoutTests.swift in Sources */,
 				CFFD229E1B4A97ABBF89F142 /* SoftwareUpdateTests.swift in Sources */,
 				9D738D8C775D1C3AE2D318AA /* StorageTests.swift in Sources */,
 				1B88F806D8C39E5C4F899323 /* SupportTests.swift in Sources */,
@@ -804,7 +812,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = TinyTodo/Resources/Info.plist;
@@ -812,7 +820,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = macosx;
@@ -1021,14 +1029,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				ENABLE_APP_SANDBOX = NO;
 				INFOPLIST_FILE = TinyTodo/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = macosx;

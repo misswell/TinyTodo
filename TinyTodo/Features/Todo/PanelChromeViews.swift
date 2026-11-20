@@ -47,7 +47,7 @@ struct PanelHeaderView: View {
                 .help("今日进度：已完成 \(todo.stats.completed) 项，今日任务 \(max(todo.stats.total, todo.stats.completed)) 项")
                 .accessibilityIdentifier("header.progress")
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, PanelLayout.contentInset)
         .frame(height: 38)
         .background(WindowDragArea())
         .background(Color.primary.opacity(0.04))
@@ -68,7 +68,7 @@ struct PanelTabBar: View {
                 .foregroundStyle(.tertiary)
                 .accessibilityIdentifier("footer.todayCompleted")
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, PanelLayout.contentInset)
         .frame(height: 34)
         .background(Color.primary.opacity(0.04))
     }

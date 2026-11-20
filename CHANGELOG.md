@@ -4,6 +4,29 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.3.1] — 2026-11-20
+
+### Fixed
+
+- Panel content now hangs off a single 14pt rail. Before, each band carried its own number:
+  day labels sat at 8pt (hugging the window edge), the header / quick input / tab bar at 14pt,
+  and the todo rows at 26pt, because a plain-style macOS `List` adds its own 8pt leading margin
+  and `.contentMargins(.horizontal, 0)` does not cancel it. Rows, group labels, header, input
+  and history all line up now; measured on screen at 2x, every band starts at 14.0–15.0pt.
+- The day-group label no longer draws a full-bleed hairline under it. A plain `List` renders
+  that separator for every `Section` header and none of `.listSectionSeparator(.hidden)` /
+  `.listRowSeparator(.hidden, edges: .all)` remove it; the label is now a row, which renders
+  clean and stays inside its own group for dragging.
+- Removed the 4pt step between a history day label and the rows under it: the row's own
+  horizontal padding is cancelled so both share one edge.
+
+### Changed
+
+- Panel metrics moved into `TinyTodo/Support/PanelLayout.swift` (`contentInset`, `glyphWidth`,
+  `glyphTextGap`, the measured `List` margins and the derived row insets) instead of repeating
+  14/18/12 in each view. `PanelLayoutTests` guards the derived values.
+- Row density is unchanged at a 32pt pitch; only the columns moved.
+
 ## [1.3.0] — 2026-11-19
 
 Milestone: TinyTodo now ships a Mac app and an iOS app from one codebase.

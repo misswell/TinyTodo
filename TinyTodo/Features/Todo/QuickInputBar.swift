@@ -14,11 +14,11 @@ struct QuickInputBar: View {
 
     var body: some View {
         // Top-aligned so the icon stays beside the first line when the field wraps.
-        HStack(alignment: .top, spacing: 9) {
+        HStack(alignment: .top, spacing: PanelLayout.glyphTextGap) {
             Image(systemName: "plus.circle.fill")
                 .font(.system(size: 13.5, weight: .regular))
                 .foregroundStyle(Color.accentColor.opacity(0.85))
-                .frame(height: QuickInputField.lineHeight, alignment: .center)
+                .frame(width: PanelLayout.glyphWidth, height: QuickInputField.lineHeight, alignment: .center)
                 .padding(.top, 2)
 
             QuickInputField(
@@ -43,7 +43,7 @@ struct QuickInputBar: View {
             .frame(maxWidth: .infinity, minHeight: fieldHeight, maxHeight: fieldHeight)
             .accessibilityIdentifier("quick.input")
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, PanelLayout.contentInset)
         .padding(.top, 8)
         .padding(.bottom, 9)
         .background(Color.primary.opacity(0.035))

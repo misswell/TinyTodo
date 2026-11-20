@@ -19,21 +19,29 @@ struct HistoryDateGroupView: View {
 
             ForEach(section.items) { item in
                 HistoryRowView(item: item)
+                    // Cancels the row's own padding so the day label and every row share the
+                    // same leading edge instead of stepping in by 4pt.
+                    .padding(.horizontal, -HistoryRowView.contentPadding)
             }
         }
     }
 }
 
 struct HistoryRowView: View {
+    /// Horizontal padding inside the hover pill; the group view cancels it so rows and the
+    /// day label share one leading edge.
+    static let contentPadding: CGFloat = 4
+
     let item: TodoItem
     @Environment(HistoryViewModel.self) private var model
     @State private var isHovering = false
 
     var body: some View {
-        HStack(alignment: .center, spacing: 7) {
+        HStack(alignment: .center, spacing: PanelLayout.glyphTextGap) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 11))
                 .foregroundStyle(Color.accentColor.opacity(0.65))
+                .frame(width: PanelLayout.glyphWidth, alignment: .leading)
 
             Text(item.title)
                 .font(.system(size: 12))
@@ -50,7 +58,7 @@ struct HistoryRowView: View {
             }
         }
         .padding(.vertical, 4)
-        .padding(.horizontal, 4)
+        .padding(.horizontal, Self.contentPadding)
         .background(
             RoundedRectangle(cornerRadius: 5, style: .continuous)
                 .fill(isHovering ? Color.primary.opacity(0.045) : Color.clear)

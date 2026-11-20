@@ -76,7 +76,7 @@ struct HistoryView: View {
             .frame(width: 22)
             .help("按月份查看")
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, PanelLayout.contentInset)
         .padding(.top, 10)
         .padding(.bottom, 6)
     }
@@ -105,7 +105,7 @@ struct HistoryView: View {
                 }
             }
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, PanelLayout.contentInset)
         .padding(.bottom, 8)
     }
 
@@ -136,7 +136,7 @@ struct HistoryView: View {
                         HistoryDateGroupView(section: section)
                     }
                 }
-                .padding(.horizontal, 14)
+                .padding(.horizontal, PanelLayout.contentInset)
                 .padding(.vertical, 10)
             }
             .accessibilityIdentifier("history.list")
@@ -155,7 +155,7 @@ struct HistoryView: View {
                     .controlSize(.mini)
             }
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, PanelLayout.contentInset)
         .frame(height: 30)
         .background(Color.primary.opacity(0.04))
     }

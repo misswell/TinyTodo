@@ -15,38 +15,61 @@ struct TodoView: View {
 
     private var list: some View {
         List {
-            ForEach(model.sections) { section in
+            ForEach(Array(model.sections.enumerated()), id: \.element.id) { index, section in
                 Section {
+                    // The day label is a row, not a Section header: a plain-style macOS List
+                    // draws a full-bleed separator under every section header and none of the
+                    // available hiding modifiers remove it. As a row it renders clean and still
+                    // scrolls with its own group.
+                    sectionLabel(section, isFirst: index == 0)
+
                     ForEach(section.items) { item in
                         TodoRowView(item: item, isEditing: model.editingID == item.id)
-                            .listRowInsets(EdgeInsets(top: 2, leading: 12, bottom: 2, trailing: 12))
+                            .listRowInsets(EdgeInsets(
+                                top: 1,
+                                leading: PanelLayout.rowInsetLeading,
+                                bottom: 1,
+                                trailing: PanelLayout.rowInsetTrailing
+                            ))
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)
                     }
                     .onMove { source, destination in
                         model.move(section: section, fromOffsets: source, toOffset: destination)
                     }
-                } header: {
-                    HStack(spacing: 6) {
-                        Text(section.title)
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundStyle(.secondary)
-                        Text("\(section.items.count) 项")
-                            .font(.system(size: 9.5).monospacedDigit())
-                            .foregroundStyle(.tertiary)
-                        Spacer(minLength: 0)
-                    }
-                    .padding(.top, 2)
-                    .accessibilityIdentifier("todo.section")
                 }
+                .listSectionSeparator(.hidden)
             }
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .environment(\.defaultMinListRowHeight, 28)
-        .padding(.top, 4)
+        .padding(.top, 2)
         .frame(minHeight: 0, maxHeight: .infinity)
         .accessibilityIdentifier("todo.list")
+    }
+
+    private func sectionLabel(_ section: PendingSection, isFirst: Bool) -> some View {
+        HStack(spacing: 6) {
+            Text(section.title)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(.secondary)
+            Text("\(section.items.count) 项")
+                .font(.system(size: 9.5).monospacedDigit())
+                .foregroundStyle(.tertiary)
+            Spacer(minLength: 0)
+        }
+        .padding(.top, isFirst ? 4 : PanelLayout.sectionTopPadding)
+        .padding(.bottom, PanelLayout.sectionBottomPadding)
+        .listRowInsets(EdgeInsets(
+            top: 0,
+            leading: PanelLayout.rowInsetLeading,
+            bottom: 0,
+            trailing: PanelLayout.rowInsetTrailing
+        ))
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+        .accessibilityIdentifier("todo.section")
     }
 
     private var emptyState: some View {
@@ -74,14 +97,14 @@ struct TodoRowView: View {
     @State private var isHovering = false
 
     var body: some View {
-        HStack(alignment: .center, spacing: 10) {
+        HStack(alignment: .center, spacing: PanelLayout.glyphTextGap) {
             Button {
                 model.complete(item)
             } label: {
                 Image(systemName: isHovering ? "checkmark.circle" : "circle")
-                    .font(.system(size: 14.5, weight: .regular))
+                    .font(.system(size: 14, weight: .regular))
                     .foregroundStyle(isHovering ? Color.accentColor : Color.secondary.opacity(0.75))
-                    .frame(width: 18, height: 18)
+                    .frame(width: PanelLayout.glyphWidth, height: PanelLayout.glyphWidth)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -109,11 +132,14 @@ struct TodoRowView: View {
 
             Spacer(minLength: 0)
         }
-        .padding(.vertical, 5)
-        .padding(.horizontal, 4)
+        .padding(.vertical, PanelLayout.rowVerticalPadding)
+        // The pill bleeds past the text rail on both sides; a background takes no part in
+        // layout, so this widens the highlight without moving the glyph off the rail.
         .background(
             RoundedRectangle(cornerRadius: 7, style: .continuous)
                 .fill(isHovering ? Color.primary.opacity(0.05) : Color.clear)
+                .padding(.horizontal, -PanelLayout.highlightBleed)
+                .padding(.vertical, -1)
         )
         .contentShape(Rectangle())
         .onHover { isHovering = $0 }
