@@ -26,6 +26,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
   `glyphTextGap`, the measured `List` margins and the derived row insets) instead of repeating
   14/18/12 in each view. `PanelLayoutTests` guards the derived values.
 - Row density is unchanged at a 32pt pitch; only the columns moved.
+- Notarization for 1.3.1: app `3ea7c440-…` and DMG `39412a1b-…` Accepted; DMG SHA-256 `6dbf2ddc…`.
 
 ## [1.3.0] — 2026-11-19
 
