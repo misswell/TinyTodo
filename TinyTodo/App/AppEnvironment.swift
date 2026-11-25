@@ -180,7 +180,7 @@ final class AppEnvironment {
     private func updateMenuBar() {
         menuBarController.update(
             todayCompleted: todoViewModel.stats.completed,
-            pendingCount: todoViewModel.items.count
+            pendingCount: todoViewModel.pendingCount
         )
     }
 }

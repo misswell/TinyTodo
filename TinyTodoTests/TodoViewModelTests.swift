@@ -100,6 +100,24 @@ final class TodoViewModelTests: XCTestCase {
         try await waitUntil { (try? await self.repository.fetchHistory(HistoryQuery()).count) == 1 }
     }
 
+    func testCompletedItemStaysInTodoListAndRestoresInPlace() async throws {
+        let firstValue = try await repository.create(title: "一")
+        let first = try XCTUnwrap(firstValue)
+        _ = try await repository.create(title: "二")
+
+        viewModel.complete(first)
+        try await waitUntil {
+            self.viewModel.items.count == 2 && self.viewModel.items.first?.status == .completed
+        }
+        XCTAssertEqual(viewModel.sections.flatMap(\.items).count, 2)
+        XCTAssertEqual(viewModel.pendingCount, 1)
+
+        let completed = try XCTUnwrap(viewModel.items.first)
+        viewModel.toggle(completed)
+        try await waitUntil { self.viewModel.items.allSatisfy { !$0.isCompleted } }
+        XCTAssertEqual(viewModel.items.map(\.title), ["一", "二"])
+    }
+
     private func waitUntil(
         timeout: TimeInterval = 5,
         condition: @escaping () async -> Bool,

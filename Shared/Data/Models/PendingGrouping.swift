@@ -1,9 +1,11 @@
 import Foundation
 
-/// Pending todos split by the local day they were created on, newest day first.
+/// The todo list split by the local day each item was created on, newest day first.
 ///
-/// The history page groups by completion day; the todo page uses the same visual rhythm so the two
-/// lists read alike, while the order inside a day still follows the user's drag order.
+/// Items completed today stay in that list with a completion mark of their own, so the user can
+/// review what they finished without opening the history page. Older completions stay in history
+/// only. The history page groups by completion day; the todo page uses the same visual rhythm so
+/// the two lists read alike, while the order inside a day still follows the user's drag order.
 struct PendingSection: Identifiable, Equatable, Sendable {
     /// Start of the day in the active calendar.
     let id: Date
@@ -53,7 +55,11 @@ enum PendingGrouping {
     ) -> [PendingSection] {
         var buckets: [Date: [TodoItem]] = [:]
         var order: [Date] = []
-        for item in items where item.status == .pending {
+        for item in items {
+            if item.isCompleted {
+                guard let completedAt = item.completedAt,
+                      calendar.isDate(completedAt, inSameDayAs: now) else { continue }
+            }
             let day = calendar.startOfDay(for: item.createdAt)
             if buckets[day] == nil { order.append(day) }
             buckets[day, default: []].append(item)
@@ -72,14 +78,37 @@ enum PendingGrouping {
         fromOffsets source: IndexSet,
         toOffset destination: Int
     ) -> [String] {
-        var moved = sectionItems
-        moved.move(fromOffsets: source, toOffset: destination)
-        let sectionIDs = Set(sectionItems.map(\.id))
+        let pendingPositions = sectionItems.indices.filter { !sectionItems[$0].isCompleted }
+        let pendingItems = pendingPositions.map { sectionItems[$0] }
+        guard !pendingItems.isEmpty else { return items.map(\.id) }
+
+        // Completed rows are anchors: they cannot be dragged, and the pending rows move through
+        // the slots around them. That keeps a checked item exactly where it was completed.
+        var pendingSource = IndexSet()
+        for index in source where sectionItems.indices.contains(index) {
+            guard !sectionItems[index].isCompleted,
+                  let pendingIndex = pendingPositions.firstIndex(of: index) else { continue }
+            pendingSource.insert(pendingIndex)
+        }
+        guard !pendingSource.isEmpty else { return items.map(\.id) }
+
+        let pendingDestination = pendingPositions.reduce(0) { count, position in
+            count + (position < destination ? 1 : 0)
+        }
+        var moved = pendingItems
+        moved.move(fromOffsets: pendingSource, toOffset: pendingDestination)
+
+        var sectionOrder = sectionItems
+        for (slot, item) in zip(pendingPositions, moved) {
+            sectionOrder[slot] = item
+        }
+
+        let sectionIDs = Set(sectionOrder.map(\.id))
         var result: [String] = []
         var cursor = 0
         for item in items {
             if sectionIDs.contains(item.id) {
-                result.append(moved[cursor].id)
+                result.append(sectionOrder[cursor].id)
                 cursor += 1
             } else {
                 result.append(item.id)

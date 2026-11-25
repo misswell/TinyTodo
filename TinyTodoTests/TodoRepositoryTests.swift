@@ -85,6 +85,29 @@ final class TodoRepositoryTests: XCTestCase {
         XCTAssertEqual(history.first?.completedAt?.timeIntervalSince1970 ?? 0, completedAt.timeIntervalSince1970, accuracy: 0.001)
     }
 
+    func testTodoListKeepsItemsCompletedTodayAndDropsOlderCompletions() async throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Asia/Shanghai")!
+        let now = calendar.date(from: DateComponents(year: 2026, month: 11, day: 25, hour: 15))!
+
+        let doneTodayValue = try await repository.create(title: "今日完成")
+        let doneToday = try XCTUnwrap(doneTodayValue)
+        let doneYesterdayValue = try await repository.create(title: "昨日完成")
+        let doneYesterday = try XCTUnwrap(doneYesterdayValue)
+        _ = try await repository.create(title: "仍待办")
+
+        _ = try await repository.complete(id: doneToday.id, at: now.addingTimeInterval(-1_800))
+        let yesterday = try XCTUnwrap(calendar.date(byAdding: .day, value: -1, to: now))
+        _ = try await repository.complete(id: doneYesterday.id, at: yesterday)
+
+        let list = try await repository.fetchTodoList(now: now, calendar: calendar)
+        XCTAssertEqual(list.map(\.title), ["今日完成", "仍待办"])
+        XCTAssertEqual(list.first?.status, .completed)
+
+        let pending = try await repository.fetchPending()
+        XCTAssertEqual(pending.map(\.title), ["仍待办"])
+    }
+
     func testUncompleteRestoresOriginalSortPosition() async throws {
         let firstValue = try await repository.create(title: "一")
         let first = try XCTUnwrap(firstValue)
@@ -162,7 +185,7 @@ final class TodoRepositoryTests: XCTestCase {
         let pending = try await repository.fetchPending()
         let reversed = pending.map(\.id).reversed()
 
-        try await repository.reorder(pendingIDs: Array(reversed))
+        try await repository.reorder(ids: Array(reversed))
         let updated = try await repository.fetchPending()
         XCTAssertEqual(updated.map(\.title), ["C", "B", "A"])
     }
@@ -264,7 +287,7 @@ final class TodoRepositoryTests: XCTestCase {
         let lock = NSLock()
         var observedCount = 0
 
-        repository.addPendingObserver { items in
+        repository.addListObserver { items in
             lock.lock()
             let first = observedCount == 0
             observedCount += 1

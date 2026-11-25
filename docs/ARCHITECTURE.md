@@ -44,8 +44,9 @@ hidesOnDeactivate = false
 ## 线程与数据流
 
 - 所有 SQLite 操作经由 `TodoRepository`，在 GRDB 的串行队列上执行；UI 不直接触碰 SQL。
-- 待办列表：`ValueObservation.tracking { SELECT ... WHERE status = 0 ORDER BY sort_order }`
-  在 main queue 推送，`TodoViewModel.items` 更新即刷新 SwiftUI。
+- 待办列表：`ValueObservation.tracking { SELECT pending + completed today ORDER BY sort_order }`
+  在 main queue 推送，`TodoViewModel.items` 更新即刷新 SwiftUI。跨过本地午夜时重启观察，
+  昨天完成的条目自动移出列表。
 - 历史与统计：变化时通过 `TodoRepository.storeDidChangeNotification` 通知视图模型重新查询
   （带 160ms 防抖），不做定时轮询。
 - 写操作前先本地提交数据库，再发通知；失败通过 Toast 显示，不让 UI 处于假状态。
@@ -53,7 +54,9 @@ hidesOnDeactivate = false
 ## 完成与历史
 
 `status` 0/1 是唯一状态源；完成即 `status = 1, completed_at = now`，撤销即 `status = 0,
-completed_at = NULL`。没有第二份历史表，因此不存在同步问题。历史查询永远带索引
+completed_at = NULL`。没有第二份历史表，因此不存在同步问题。今天完成的条目保留在待办列表
+原位置，显示实心勾选、删除线和淡色文本；排序持久化覆盖这些可见行，避免拖动相邻任务时完成行漂移。
+菜单栏角标仍只统计未完成条目。历史查询永远带索引
 （`completed_at`、`status, sort_order`），1 万条任务的分页查询在测试中 < 2s（实测 0.13s）。
 
 ## 撤销

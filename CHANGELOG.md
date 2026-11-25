@@ -4,6 +4,29 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.4.0] — 2026-11-25
+
+### Added
+
+- Todos completed today now stay in the todo list until local midnight instead of disappearing
+  immediately. They keep their place in the day group, show a filled checkmark, strikethrough and
+  muted text, and can be clicked again to restore them at their original position. Older
+  completions remain history-only.
+- iOS shows the same completed-today state; the list observation restarts when the local day
+  rolls over, so yesterday's completions leave the list automatically.
+
+### Changed
+
+- The todo list observation now fetches pending rows plus rows completed inside the current local
+  day. The menu-bar badge still counts pending todos only.
+- Reordering persists the visible list order, including completed-today rows, so dragging a
+  neighbour cannot make a checked row drift. Completed rows are non-draggable anchors.
+- 138 unit/integration tests, including new coverage for the completed-today list, completed-row
+  anchoring, the repository query and the view-model flow.
+- macOS 1.4.0 (build 12); iOS 1.1.0 (build 2).
+- Notarization for 1.4.0: app `f980c920-ae31-48eb-9b16-258e66f7c9c0` and DMG
+  `9a8357f7-c8b9-4242-b6d2-19d92ea09ae6` Accepted; DMG SHA-256 `a58d393a…`.
+
 ## [1.3.1] — 2026-11-20
 
 ### Fixed

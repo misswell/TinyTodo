@@ -18,7 +18,7 @@ TinyTodo 不是 Things 3 / Todoist 那种任务管理器，而是一个随时可
 - 打开电脑就能看到待办。
 - 添加任务只需一次输入、一次回车。
 - 完成任务只需点击一次。
-- 已完成任务进入历史记录，永久保留，不自动丢弃。
+- 已完成任务进入历史记录，永久保留；今天完成的仍留在待办列表里，方便回看。
 - 误操作随时撤销。
 
 只解决五件事：快速记录、快速勾选、始终显示、查看历史、随时撤销。不做项目管理、团队协作、账号系统。
@@ -30,8 +30,8 @@ TinyTodo 不是 Things 3 / Todoist 那种任务管理器，而是一个随时可
 | 原生悬浮窗口 | AppKit `NSPanel`，默认置顶、跨 Spaces、全屏应用旁可见、可拖动可缩放、记住每个显示器的位置 |
 | 快速记录 | 底部输入框，Enter 保存并清空，可连续输入；粘贴多行文本自动拆成多条（自动去掉 `- `、`* `、`[ ]` 等前缀）；**草稿自动保存并回显**，输入过长时自动换行增高（最多 4 行，面板同步增高） |
 | 中文输入法 | 拼音组合期间按 Enter 只确认候选词，不会误创建半截任务；输入控件为 `NSTextView` 包装，显式检查 `hasMarkedText()`；占位符由同一个 `NSTextView` 绘制，与输入文字共用字体、内边距和基线 |
-| 完成与撤销 | 单击圆圈完成，立即移出待办、写入完成时间；`⌘Z` 或 Toast 上的「撤销」按钮恢复，回复到原排序位置 |
-| 待办分组 | 待办按创建日期分组（今天 / 昨天 / 更早），组内保持拖拽顺序 |
+| 完成与撤销 | 单击圆圈完成并写入完成时间；今天完成的条目仍留在原位置，显示实心勾选、删除线和变淡颜色，点击可撤销完成；`⌘Z` 或 Toast 上的「撤销」按钮也能恢复原排序位置 |
+| 待办分组 | 待办按创建日期分组（今天 / 昨天 / 更早），组内保持拖拽顺序；已完成条目不可拖动，次日自动从待办列表移出 |
 | 历史记录 | 按本地日期分组（今天 / 昨天 / 最近 7 天 / 30 天）、按月查看、搜索、每天完成数量、累计完成数、恢复到待办、删除记录 |
 | 本地存储 | SQLite + GRDB，WAL 模式，事务写入，版本化迁移，崩溃后可恢复；历史永不自动清理 |
 | 备份 | JSON 导入 / 导出（ISO-8601 时间戳），导入按 id 合并，不清空现有数据 |
@@ -68,7 +68,7 @@ TinyTodo 不是 Things 3 / Todoist 那种任务管理器，而是一个随时可
 
 **为什么不是纯 SwiftUI 窗口？** 置顶、跨 Spaces、全屏辅助、失焦不隐藏、逐显示器记忆位置这些行为，需要 `NSPanel` 级别的控制。SwiftUI 只负责绘制内容。
 
-线程模型：数据库读写全部异步（GRDB queue），主线程只更新 UI；待办列表通过 `ValueObservation` 推送，历史页按需查询，无定时轮询。空闲 CPU ≈ 0%。
+线程模型：数据库读写全部异步（GRDB queue），主线程只更新 UI；待办列表（未完成 + 今天完成）通过 `ValueObservation` 推送，历史页按需查询，无定时轮询。空闲 CPU ≈ 0%。
 
 ### 数据
 
@@ -103,7 +103,7 @@ CREATE TABLE todos (
 
 `TinyTodoIOS` 是同一仓库里的 iOS App（iOS 17+），与 Mac 共用 `Shared/` 里的模型、数据库与备份格式：
 
-- 待办按创建日期分组（今天 / 昨天 / 更早）、单行快速记录、历史搜索、左滑恢复、右滑删除。
+- 待办按创建日期分组（今天 / 昨天 / 更早），今天完成的条目保留勾选、删除线和淡色；单行快速记录、历史搜索、左滑恢复、右滑删除。
 - 同步走 iCloud Drive：设置 › 同步里用系统文件选择器选一次与 Mac 相同的 `TinyTodo` 文件夹，
   iOS 用 security-scoped bookmark 长期访问该目录；文件被 iCloud 替换后切回前台会自动重开数据库。
 - 也可以只用本机存储，随时在两种模式间切换。
@@ -116,7 +116,7 @@ xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodoIOS \
 > 在模拟器构建需要先安装 iOS 平台组件（Xcode › Settings › Components，或
 > `xcodebuild -downloadPlatform iOS`）。当前仓库未提供 iOS 安装包：App Store 分发需要单独的应用记录与审核。
 >
-> iOS 端目前没有独立的测试 target：数据层是同一份 `Shared/` 源码，由 macOS 套件的 130 个测试覆盖；
+> iOS 端目前没有独立的测试 target：数据层是同一份 `Shared/` 源码，由 macOS 套件的 138 个测试覆盖；
 > 本机模拟器上 XCUITest/单元测试运行器会卡在 "test runner hung before establishing connection"，
 > 因此没有把会卡住的测试配置留在工程里。
 
@@ -131,7 +131,7 @@ xcodegen generate
 # 构建
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' build
 
-# 单元 + 集成测试（130 个）
+# 单元 + 集成测试（138 个）
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' test
 
 # 开发用 ad-hoc DMG
@@ -148,7 +148,7 @@ bash scripts/notarize.sh
 
 ### 测试
 
-- `TinyTodoTests`：130 个单元/集成测试，覆盖创建/批量创建/并发创建、完成与撤销、排序、重命名、删除恢复、历史搜索与日期过滤、今日统计、WAL、重启持久化、v1→v3 迁移不丢数据、JSON 导入导出、按天分组（含夏令时）、撤销栈、视图模型流程、真实 `NSPanel` 的置顶/Spaces/透明度/帧持久化。
+- `TinyTodoTests`：138 个单元/集成测试，覆盖创建/批量创建/并发创建、完成与撤销、今日完成留在列表、排序、重命名、删除恢复、历史搜索与日期过滤、今日统计、WAL、重启持久化、v1→v3 迁移不丢数据、JSON 导入导出、按天分组（含夏令时）、撤销栈、视图模型流程、真实 `NSPanel` 的置顶/Spaces/透明度/帧持久化。
 - `TinyTodoUITests`：XCUITest 覆盖启动出窗、输入创建、勾选完成进入历史、历史页、设置窗口、以及「自动化窗口落在非主屏」。UI-test 模式下 `TestScreenPolicy` 会把面板和设置窗口放到非主显示器，避免占用用户正在工作的屏幕。XCUITest 需要给测试运行器授予「辅助功能/自动化」权限（系统设置 › 隐私与安全性 › 辅助功能）；CI 只编译该测试包（GitHub 托管 runner 无登录 GUI 会话）。
 - GitHub Actions：`.github/workflows/build.yml` 在 `macos-latest` 上构建 Release、跑测试、打出 DMG 并上传 artifact。
 
@@ -185,8 +185,10 @@ No accounts, no network, no cloud. Everything lives in a local SQLite database.
   auxiliary window, survives app switches, draggable/resizable, remembers a frame per display.
 - **One-field capture** with IME safety: Return during Pinyin composition confirms the candidate
   instead of creating a half-typed todo. Multi-line paste becomes multiple todos.
-- **Complete → history** with `completed_at`; `⌘Z` (or the toast action) restores the item at its
-  original position. Delete, reorder and rename are undoable too.
+- **Complete in place**: today's completed todos stay in the list with a filled check, strikethrough
+  and muted color (until local midnight); clicking them again restores the item. History still keeps
+  every completion, and `⌘Z` (or the toast action) restores the original position. Delete, reorder
+  and rename are undoable too.
 - **History** grouped by local day, month picker, search, per-day counts, restore to todo,
   delete record, cumulative total.
 - **SQLite + GRDB** in WAL mode with additive migrations (v1 → v3); history is never auto-purged.
@@ -209,7 +211,7 @@ No accounts, no network, no cloud. Everything lives in a local SQLite database.
 
 Swift 5 language mode on the Swift 6.3 compiler, macOS 14+. SwiftUI draws the content; AppKit owns
 the window (`FloatingPanelController`, `ScreenManager`, `WindowStateManager`). GRDB runs all reads
-and writes off the main thread; the pending list is pushed through `ValueObservation`, history is
+and writes off the main thread; the todo list (pending + today's completions) is pushed through `ValueObservation`, history is
 queried on demand. Idle CPU is ~0%.
 
 Data lives at `~/Library/Application Support/TinyTodo/TinyTodo.sqlite` (+ `-wal`, `-shm`).
@@ -234,7 +236,7 @@ project builds offline and CI needs no package downloads.
 
 ### Testing
 
-130 unit/integration tests cover the repository, migrations (including a v1 database upgrade that
+138 unit/integration tests cover the repository, migrations (including a v1 database upgrade that
 keeps history rows), JSON import/export, day grouping (DST included), undo, view-model flows and the
 real panel's level, Spaces behavior, opacity and frame persistence. XCUITest covers launch, create,
 complete, history, settings, and that the automation window lands on a non-main display. UI tests need

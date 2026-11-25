@@ -64,6 +64,11 @@ final class TinyTodoUITests: XCTestCase {
         XCTAssertTrue(checkbox.waitForExistence(timeout: 5))
         checkbox.click()
 
+        XCTAssertTrue(
+            created.waitForExistence(timeout: 5),
+            "completed todo should stay in the list for the rest of today"
+        )
+
         app.buttons["tab.history"].click()
         XCTAssertTrue(
             app.staticTexts["写一条待办"].firstMatch.waitForExistence(timeout: 5),

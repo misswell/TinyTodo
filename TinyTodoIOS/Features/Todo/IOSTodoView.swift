@@ -29,6 +29,7 @@ struct IOSTodoView: View {
                         Section {
                             ForEach(section.items) { item in
                                 row(item)
+                                    .moveDisabled(item.isCompleted)
                                     .swipeActions(edge: .trailing) {
                                         Button(role: .destructive) { model.delete(item) } label: {
                                             Label("删除", systemImage: "trash")
@@ -69,24 +70,28 @@ struct IOSTodoView: View {
     private func row(_ item: TodoItem) -> some View {
         HStack(spacing: 12) {
             Button {
-                model.complete(item)
+                model.toggle(item)
             } label: {
-                Image(systemName: "circle")
+                Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 20))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(item.isCompleted ? Color.accentColor.opacity(0.65) : Color.secondary)
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("ios.todo.checkbox")
 
             Text(item.title)
                 .font(.body)
+                .foregroundStyle(item.isCompleted ? Color.secondary : Color.primary)
+                .strikethrough(item.isCompleted, color: .secondary.opacity(0.7))
                 .onTapGesture {
+                    guard !item.isCompleted else { return }
                     editing = item
                     editTitle = item.title
                 }
         }
         .padding(.vertical, 4)
         .accessibilityIdentifier("ios.todo.row")
+        .accessibilityValue(item.isCompleted ? "已完成" : "未完成")
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) { model.delete(item) } label: {
                 Label("删除", systemImage: "trash")

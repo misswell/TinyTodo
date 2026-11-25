@@ -25,6 +25,7 @@ struct TodoView: View {
 
                     ForEach(section.items) { item in
                         TodoRowView(item: item, isEditing: model.editingID == item.id)
+                            .moveDisabled(item.isCompleted)
                             .listRowInsets(EdgeInsets(
                                 top: 1,
                                 leading: PanelLayout.rowInsetLeading,
@@ -99,16 +100,16 @@ struct TodoRowView: View {
     var body: some View {
         HStack(alignment: .center, spacing: PanelLayout.glyphTextGap) {
             Button {
-                model.complete(item)
+                model.toggle(item)
             } label: {
-                Image(systemName: isHovering ? "checkmark.circle" : "circle")
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundStyle(isHovering ? Color.accentColor : Color.secondary.opacity(0.75))
+                Image(systemName: checkboxSymbol)
+                    .font(.system(size: 14, weight: item.isCompleted ? .semibold : .regular))
+                    .foregroundStyle(checkboxColor)
                     .frame(width: PanelLayout.glyphWidth, height: PanelLayout.glyphWidth)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .help("完成任务")
+            .help(item.isCompleted ? "撤销完成" : "完成任务")
             .accessibilityIdentifier("todo.checkbox")
 
             if isEditing {
@@ -124,7 +125,8 @@ struct TodoRowView: View {
             } else {
                 Text(item.title)
                     .font(.system(size: 13))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(item.isCompleted ? Color.secondary : Color.primary)
+                    .strikethrough(item.isCompleted, color: .secondary.opacity(0.7))
                     .lineSpacing(2)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
@@ -144,18 +146,36 @@ struct TodoRowView: View {
         .contentShape(Rectangle())
         .onHover { isHovering = $0 }
         .onTapGesture(count: 2) {
-            if !isEditing { model.beginEditing(item) }
+            if !isEditing && !item.isCompleted { model.beginEditing(item) }
         }
         .contextMenu {
-            Button("编辑") { model.beginEditing(item) }
-            Button("上移") { model.move(item, by: -1) }
-            Button("下移") { model.move(item, by: 1) }
-            Button("复制文字") { copyTitle() }
-            Divider()
-            Button("删除", role: .destructive) { model.delete(item) }
+            if item.isCompleted {
+                Button("撤销完成") { model.toggle(item) }
+                Button("复制文字") { copyTitle() }
+                Divider()
+                Button("删除", role: .destructive) { model.delete(item) }
+            } else {
+                Button("编辑") { model.beginEditing(item) }
+                Button("上移") { model.move(item, by: -1) }
+                Button("下移") { model.move(item, by: 1) }
+                Button("复制文字") { copyTitle() }
+                Divider()
+                Button("删除", role: .destructive) { model.delete(item) }
+            }
         }
         .accessibilityIdentifier("todo.row")
         .accessibilityLabel(item.title)
+        .accessibilityValue(item.isCompleted ? "已完成" : "未完成")
+    }
+
+    private var checkboxSymbol: String {
+        if item.isCompleted { return "checkmark.circle.fill" }
+        return isHovering ? "checkmark.circle" : "circle"
+    }
+
+    private var checkboxColor: Color {
+        if item.isCompleted { return Color.accentColor.opacity(0.65) }
+        return isHovering ? Color.accentColor : Color.secondary.opacity(0.75)
     }
 
     private func copyTitle() {

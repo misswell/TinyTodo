@@ -38,57 +38,73 @@ final class TodoRepository: @unchecked Sendable {
     static let storeDidChangeNotification = Notification.Name("app.tinytodo.storeDidChange")
 
     let dbQueue: DatabaseQueue
-    private var pendingObservers: [([TodoItem]) -> Void] = []
-    private var pendingObservation: AnyDatabaseCancellable?
+    private var listObservers: [([TodoItem]) -> Void] = []
+    private var listObservation: AnyDatabaseCancellable?
+    private var visibleDayStart = Calendar.autoupdatingCurrent.startOfDay(for: Date())
     private let logger = Logger(subsystem: TinyTodoCoreInfo.subsystem, category: "repository")
 
     init(dbQueue: DatabaseQueue) {
         self.dbQueue = dbQueue
-        startPendingObservation()
+        startListObservation()
     }
 
     deinit {
-        pendingObservation?.cancel()
+        listObservation?.cancel()
     }
 
     // MARK: - Observation
 
-    func addPendingObserver(_ observer: @escaping ([TodoItem]) -> Void) {
-        pendingObservers.append(observer)
+    /// Delivers the todo list: every pending item plus the items completed today.
+    func addListObserver(_ observer: @escaping ([TodoItem]) -> Void) {
+        listObservers.append(observer)
     }
 
-    private func startPendingObservation() {
-        pendingObservation?.cancel()
+    private func startListObservation() {
+        listObservation?.cancel()
+        let dayStart = visibleDayStart
+        let dayEnd = Calendar.autoupdatingCurrent.date(byAdding: .day, value: 1, to: dayStart)
+            ?? dayStart.addingTimeInterval(86_400)
         let observation = ValueObservation.tracking { db in
-            try Self.fetchPendingItems(db)
+            try Self.fetchListItems(db, completedFrom: dayStart, completedBefore: dayEnd)
         }
-        pendingObservation = observation.start(
+        listObservation = observation.start(
             in: dbQueue,
             scheduling: .async(onQueue: .main),
             onError: { [logger] error in
-                logger.error("pending observation failed: \(String(describing: error), privacy: .public)")
+                logger.error("list observation failed: \(String(describing: error), privacy: .public)")
             },
             onChange: { [weak self] items in
                 MainActor.assumeIsolated {
-                    self?.deliverPending(items)
+                    self?.deliverList(items)
                 }
             }
         )
     }
 
     @MainActor
-    private func deliverPending(_ items: [TodoItem]) {
-        for observer in pendingObservers {
+    private func deliverList(_ items: [TodoItem]) {
+        for observer in listObservers {
             observer(items)
         }
     }
 
-    func fetchPending() async throws -> [TodoItem] {
-        try await dbQueue.read { db in try Self.fetchPendingItems(db) }
+    /// Restarts the observation when the local day rolls over, so yesterday's completed rows
+    /// leave the list and today's appear. Returns the refreshed list when a restart happened.
+    @MainActor
+    @discardableResult
+    func refreshVisibleDayIfNeeded(
+        now: Date = Date(),
+        calendar: Calendar = .autoupdatingCurrent
+    ) async throws -> [TodoItem]? {
+        let dayStart = calendar.startOfDay(for: now)
+        guard dayStart != visibleDayStart else { return nil }
+        visibleDayStart = dayStart
+        startListObservation()
+        return try await fetchTodoList(now: now, calendar: calendar)
     }
 
-    func reloadPending() async throws -> [TodoItem] {
-        try await fetchPending()
+    func fetchPending() async throws -> [TodoItem] {
+        try await dbQueue.read { db in try Self.fetchPendingItems(db) }
     }
 
     private static func fetchPendingItems(_ db: Database) throws -> [TodoItem] {
@@ -102,8 +118,37 @@ final class TodoRepository: @unchecked Sendable {
         )
     }
 
+    func fetchTodoList(
+        now: Date = Date(),
+        calendar: Calendar = .autoupdatingCurrent
+    ) async throws -> [TodoItem] {
+        let dayStart = calendar.startOfDay(for: now)
+        let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart)
+            ?? dayStart.addingTimeInterval(86_400)
+        return try await dbQueue.read { db in
+            try Self.fetchListItems(db, completedFrom: dayStart, completedBefore: dayEnd)
+        }
+    }
+
+    private static func fetchListItems(
+        _ db: Database,
+        completedFrom dayStart: Date,
+        completedBefore dayEnd: Date
+    ) throws -> [TodoItem] {
+        try TodoItem.fetchAll(
+            db,
+            sql: """
+                SELECT * FROM todos
+                WHERE status = 0
+                   OR (status = 1 AND completed_at >= ? AND completed_at < ?)
+                ORDER BY sort_order ASC, created_at ASC, id ASC
+                """,
+            arguments: [dayStart.timeIntervalSince1970, dayEnd.timeIntervalSince1970]
+        )
+    }
+
     private func notifyStoreChanged() {
-        // The pending list is delivered through the ValueObservation above; history and stats
+        // The todo list is delivered through the ValueObservation above; history and stats
         // listeners subscribe to this notification.
         NotificationCenter.default.post(name: Self.storeDidChangeNotification, object: self)
     }
@@ -187,13 +232,15 @@ final class TodoRepository: @unchecked Sendable {
         return deleted
     }
 
-    func reorder(pendingIDs: [String]) async throws {
-        guard !pendingIDs.isEmpty else { return }
+    /// Persists the visible list order, pending and completed-today rows alike, so a completed
+    /// row keeps its place instead of drifting when its neighbours are dragged.
+    func reorder(ids: [String]) async throws {
+        guard !ids.isEmpty else { return }
         try await dbQueue.write { db in
             let now = Date().timeIntervalSince1970
-            for (index, id) in pendingIDs.enumerated() {
+            for (index, id) in ids.enumerated() {
                 try db.execute(
-                    sql: "UPDATE todos SET sort_order = ?, updated_at = ? WHERE id = ? AND status = 0",
+                    sql: "UPDATE todos SET sort_order = ?, updated_at = ? WHERE id = ?",
                     arguments: [index, now, id]
                 )
             }
@@ -246,7 +293,7 @@ final class TodoRepository: @unchecked Sendable {
     }
 
     private static func nextSortOrder(_ db: Database) throws -> Int {
-        (try Int.fetchOne(db, sql: "SELECT COALESCE(MAX(sort_order), -1) FROM todos WHERE status = 0") ?? -1) + 1
+        (try Int.fetchOne(db, sql: "SELECT COALESCE(MAX(sort_order), -1) FROM todos") ?? -1) + 1
     }
 
     // MARK: - Reads

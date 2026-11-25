@@ -40,12 +40,10 @@ final class TodoViewModel {
         self.repository = repository
         self.undoService = undoService
 
-        repository.addPendingObserver { [weak self] items in
+        repository.addListObserver { [weak self] items in
             MainActor.assumeIsolated {
                 guard let self else { return }
-                self.items = items
-                self.sections = PendingGrouping.sections(from: items)
-                self.onItemsChanged?(items)
+                self.apply(items)
             }
         }
 
@@ -69,8 +67,7 @@ final class TodoViewModel {
 
     func bootstrap() async {
         do {
-            items = try await repository.reloadPending()
-            sections = PendingGrouping.sections(from: items)
+            apply(try await repository.fetchTodoList())
             await refreshStats()
         } catch {
             presentError(error)
@@ -79,6 +76,9 @@ final class TodoViewModel {
 
     func refreshStats() async {
         do {
+            if let refreshed = try await repository.refreshVisibleDayIfNeeded() {
+                apply(refreshed)
+            }
             let newStats = try await repository.todayStats()
             if newStats != stats {
                 stats = newStats
@@ -87,6 +87,16 @@ final class TodoViewModel {
         } catch {
             presentError(error)
         }
+    }
+
+    var pendingCount: Int {
+        items.reduce(0) { count, item in count + (item.isCompleted ? 0 : 1) }
+    }
+
+    private func apply(_ newItems: [TodoItem]) {
+        items = newItems
+        sections = PendingGrouping.sections(from: newItems)
+        onItemsChanged?(newItems)
     }
 
     // MARK: - Mutations
@@ -136,7 +146,7 @@ final class TodoViewModel {
 
     func restore(_ item: TodoItem) async {
         do {
-            _ = try await repository.uncomplete(id: item.id, position: .end)
+            _ = try await repository.uncomplete(id: item.id, position: .original)
             await refreshStats()
         } catch {
             presentError(error)
@@ -184,7 +194,7 @@ final class TodoViewModel {
 
         Task {
             do {
-                try await repository.reorder(pendingIDs: newOrder)
+                try await repository.reorder(ids: newOrder)
                 undoService.push(.reorder(previousOrder: previousOrder), label: "调整任务顺序")
             } catch {
                 presentError(error)
@@ -211,7 +221,7 @@ final class TodoViewModel {
         sections = PendingGrouping.sections(from: items)
         Task {
             do {
-                try await repository.reorder(pendingIDs: order)
+                try await repository.reorder(ids: order)
                 undoService.push(.reorder(previousOrder: previousOrder), label: "调整任务顺序")
             } catch {
                 presentError(error)
@@ -276,7 +286,7 @@ final class TodoViewModel {
             case let .delete(items):
                 try await repository.restore(items: items)
             case let .reorder(previousOrder):
-                try await repository.reorder(pendingIDs: previousOrder)
+                try await repository.reorder(ids: previousOrder)
             case let .rename(previous):
                 _ = try await repository.rename(id: previous.id, title: previous.title)
             }

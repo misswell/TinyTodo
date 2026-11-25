@@ -58,7 +58,7 @@ final class IOSAppModel {
         do {
             let manager = try DatabaseManager(directory: directory, storageMode: mode)
             let repo = TodoRepository(dbQueue: manager.dbQueue)
-            repo.addPendingObserver { [weak self] items in
+            repo.addListObserver { [weak self] items in
                 guard let self else { return }
                 self.items = items
                 Task { await self.refreshStats() }
@@ -68,7 +68,7 @@ final class IOSAppModel {
             lastKnownModification = modificationDate(of: manager.fileURL)
             errorMessage = nil
             Task {
-                self.items = (try? await repo.fetchPending()) ?? []
+                self.items = (try? await repo.fetchTodoList()) ?? []
                 await self.refreshStats()
             }
             return true
@@ -149,6 +149,18 @@ final class IOSAppModel {
         }
     }
 
+    func toggle(_ item: TodoItem) {
+        guard let repository else { return }
+        if item.isCompleted {
+            Task {
+                _ = try? await repository.uncomplete(id: item.id, position: .original)
+                await refreshStats()
+            }
+        } else {
+            complete(item)
+        }
+    }
+
     func restore(_ item: TodoItem) {
         guard let repository else { return }
         Task {
@@ -171,7 +183,7 @@ final class IOSAppModel {
         guard let repository else { return }
         let byID = Dictionary(uniqueKeysWithValues: items.map { ($0.id, $0) })
         items = ids.compactMap { byID[$0] }
-        Task { try? await repository.reorder(pendingIDs: ids) }
+        Task { try? await repository.reorder(ids: ids) }
     }
 
     func move(from source: IndexSet, to destination: Int) {
@@ -179,7 +191,7 @@ final class IOSAppModel {
         var reordered = items
         reordered.move(fromOffsets: source, toOffset: destination)
         items = reordered
-        Task { try? await repository.reorder(pendingIDs: reordered.map(\.id)) }
+        Task { try? await repository.reorder(ids: reordered.map(\.id)) }
     }
 
     func setError(_ message: String) {
@@ -188,6 +200,9 @@ final class IOSAppModel {
 
     func refreshStats() async {
         guard let repository else { return }
+        if let refreshed = try? await repository.refreshVisibleDayIfNeeded() {
+            items = refreshed
+        }
         if let newStats = try? await repository.todayStats() {
             stats = newStats
         }
