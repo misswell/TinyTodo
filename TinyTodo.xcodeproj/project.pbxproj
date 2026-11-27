@@ -37,6 +37,7 @@
 		4B05D77B9A3C225C01DD0EC7 /* HistoryGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EF5BC15B73D6D0D307596E /* HistoryGrouping.swift */; };
 		4CBE3B9100E6C4832A39BB54 /* HistoryGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EF5BC15B73D6D0D307596E /* HistoryGrouping.swift */; };
 		53661584261F3BDD1340FF65 /* SoftwareUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3895C217A84384922D299CD /* SoftwareUpdate.swift */; };
+		60121B825C2923988FAA9CDE /* TodoTitleEditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05C2B8EA52860B46CBB47BC /* TodoTitleEditorTests.swift */; };
 		6109491957979712DD316B82 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C043500D782781C03BE1B945 /* AppInfo.swift */; };
 		63EE085A4FEF4D1E4179EEDD /* TodoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F51DCC77D134DFC3FE1D18E /* TodoViewModel.swift */; };
 		71718666449709E3B719E961 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = FD69ADE66AE4F496B51D742B /* GRDB */; };
@@ -169,6 +170,7 @@
 		C9E3FF53605D95390EE85DB7 /* TodoViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoViewModelTests.swift; sourceTree = "<group>"; };
 		CAF276D9CE88671C37059CA8 /* HotKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyManager.swift; sourceTree = "<group>"; };
 		CB6F2ED3E5162E4FE181661B /* TinyTodoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinyTodoUITests.swift; sourceTree = "<group>"; };
+		D05C2B8EA52860B46CBB47BC /* TodoTitleEditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTitleEditorTests.swift; sourceTree = "<group>"; };
 		D0F545BFE41158187CC0A5C8 /* FloatingPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelTests.swift; sourceTree = "<group>"; };
 		DCE0719DCC9DABD78D395E1D /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		DDB2ACB3AC0088E06D0F71B4 /* SemanticVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticVersion.swift; sourceTree = "<group>"; };
@@ -263,6 +265,7 @@
 				6828EE7E2D6AFBE7077A1C3D /* StorageTests.swift */,
 				DDC2F8D93F588C0FEDF88F93 /* SupportTests.swift */,
 				569D59FF31B3E729C33EAFFA /* TodoRepositoryTests.swift */,
+				D05C2B8EA52860B46CBB47BC /* TodoTitleEditorTests.swift */,
 				C9E3FF53605D95390EE85DB7 /* TodoViewModelTests.swift */,
 				F4B376B0BA6C963F930C8073 /* UndoServiceTests.swift */,
 			);
@@ -776,6 +779,7 @@
 				9D738D8C775D1C3AE2D318AA /* StorageTests.swift in Sources */,
 				1B88F806D8C39E5C4F899323 /* SupportTests.swift in Sources */,
 				44F82068F796C8B71BFC801E /* TodoRepositoryTests.swift in Sources */,
+				60121B825C2923988FAA9CDE /* TodoTitleEditorTests.swift in Sources */,
 				F69A65AA832CC1B77FC258C5 /* TodoViewModelTests.swift in Sources */,
 				89C4639CDA07D875B9EA3D33 /* UndoServiceTests.swift in Sources */,
 			);
@@ -812,7 +816,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = TinyTodo/Resources/Info.plist;
@@ -820,7 +824,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.4.0;
+				MARKETING_VERSION = 1.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = macosx;
@@ -969,14 +973,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = U8U443D7ZL;
 				INFOPLIST_FILE = TinyTodoIOS/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo.iOS;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = iphoneos;
@@ -1029,14 +1033,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				ENABLE_APP_SANDBOX = NO;
 				INFOPLIST_FILE = TinyTodo/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.4.0;
+				MARKETING_VERSION = 1.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = macosx;
@@ -1071,14 +1075,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = U8U443D7ZL;
 				INFOPLIST_FILE = TinyTodoIOS/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = app.tinytodo.TinyTodo.iOS;
 				PRODUCT_NAME = TinyTodo;
 				SDKROOT = iphoneos;

@@ -85,6 +85,31 @@ final class TinyTodoUITests: XCTestCase {
         XCTAssertTrue(total.label.contains("累计完成"))
     }
 
+    func testDoubleClickOpensFocusedInlineEditorAndSaves() {
+        XCTAssertTrue(panel.waitForExistence(timeout: 15))
+
+        let input = app.textViews["quick.input"].firstMatch
+        XCTAssertTrue(input.waitForExistence(timeout: 5))
+        input.click()
+        app.typeText("旧标题")
+        app.typeKey(.return, modifierFlags: [])
+
+        let row = app.descendants(matching: .any)["todo.row"].firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        row.doubleClick()
+
+        let editor = app.textFields["todo.editor"].firstMatch
+        XCTAssertTrue(editor.waitForExistence(timeout: 5), "double-click should open the inline editor")
+        // The editor selects the whole title on focus, so typing replaces it without an extra click.
+        editor.typeText("新标题")
+        editor.typeKey(.return, modifierFlags: [])
+
+        XCTAssertTrue(
+            app.staticTexts["新标题"].firstMatch.waitForExistence(timeout: 5),
+            "Return should commit the edited title"
+        )
+    }
+
     /// The automation window must stay off the display the user is working on.
     func testPanelUsesSecondaryDisplayWhenAvailable() throws {
         XCTAssertTrue(panel.waitForExistence(timeout: 15))

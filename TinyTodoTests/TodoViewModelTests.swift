@@ -31,6 +31,7 @@ final class TodoViewModelTests: XCTestCase {
 
         viewModel.complete(first)
         try await waitUntil { (try? await self.repository.fetchPending().count) == 1 }
+        try await waitUntil { self.undoService.canUndo }
         let history = try await repository.fetchHistory(HistoryQuery())
         XCTAssertEqual(history.map(\.title), ["一"])
 
@@ -116,6 +117,26 @@ final class TodoViewModelTests: XCTestCase {
         viewModel.toggle(completed)
         try await waitUntil { self.viewModel.items.allSatisfy { !$0.isCompleted } }
         XCTAssertEqual(viewModel.items.map(\.title), ["一", "二"])
+    }
+
+    func testEditingCompletedItemKeepsCompletionAndChangesHistoryTitle() async throws {
+        let value = try await repository.create(title: "旧标题")
+        let item = try XCTUnwrap(value)
+
+        viewModel.complete(item)
+        try await waitUntil { self.viewModel.items.first?.status == .completed }
+
+        let completed = try XCTUnwrap(viewModel.items.first)
+        viewModel.beginEditing(completed)
+        XCTAssertEqual(viewModel.editingText, "旧标题")
+        viewModel.editingText = "新标题"
+        viewModel.commitEditing()
+
+        try await waitUntil { self.viewModel.items.first?.title == "新标题" }
+        XCTAssertEqual(viewModel.items.first?.status, .completed)
+        let history = try await repository.fetchHistory(HistoryQuery())
+        XCTAssertEqual(history.first?.title, "新标题")
+        XCTAssertEqual(history.first?.status, .completed)
     }
 
     private func waitUntil(

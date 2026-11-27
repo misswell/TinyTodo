@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct TodoView: View {
@@ -113,14 +114,19 @@ struct TodoRowView: View {
             .accessibilityIdentifier("todo.checkbox")
 
             if isEditing {
-                TextField("任务内容", text: Binding(
-                    get: { model.editingText },
-                    set: { model.editingText = $0 }
-                ))
-                .textFieldStyle(.plain)
-                .font(.system(size: 13))
-                .onSubmit { model.commitEditing() }
-                .onExitCommand { model.cancelEditing() }
+                TodoTitleEditor(
+                    text: Binding(
+                        get: { model.editingText },
+                        set: { model.editingText = $0 }
+                    ),
+                    onSubmit: { model.commitEditing() },
+                    onCancel: { model.cancelEditing() }
+                )
+                .frame(maxWidth: .infinity, minHeight: 18, maxHeight: 18, alignment: .leading)
+                .background(
+                    Color.primary.opacity(0.06),
+                    in: RoundedRectangle(cornerRadius: 4, style: .continuous)
+                )
                 .accessibilityIdentifier("todo.editor")
             } else {
                 Text(item.title)
@@ -146,10 +152,11 @@ struct TodoRowView: View {
         .contentShape(Rectangle())
         .onHover { isHovering = $0 }
         .onTapGesture(count: 2) {
-            if !isEditing && !item.isCompleted { model.beginEditing(item) }
+            if !isEditing { model.beginEditing(item) }
         }
         .contextMenu {
             if item.isCompleted {
+                Button("编辑") { model.beginEditing(item) }
                 Button("撤销完成") { model.toggle(item) }
                 Button("复制文字") { copyTitle() }
                 Divider()
@@ -182,5 +189,114 @@ struct TodoRowView: View {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(item.title, forType: .string)
+    }
+}
+
+/// Inline title editor backed by `NSTextField`.
+///
+/// A plain SwiftUI `TextField` appeared in the row but did not become first responder, so a
+/// double-click looked like a no-op and typing still went to the quick-input field. This view
+/// focuses itself as soon as it is attached to the window, selects the whole title, and commits
+/// on Return or focus loss.
+struct TodoTitleEditor: NSViewRepresentable {
+    @Binding var text: String
+    var onSubmit: () -> Void
+    var onCancel: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+
+    func makeNSView(context: Context) -> AutoFocusTextField {
+        let field = AutoFocusTextField()
+        field.delegate = context.coordinator
+        field.isEditable = true
+        field.isSelectable = true
+        field.isBordered = false
+        field.isBezeled = false
+        field.drawsBackground = false
+        field.focusRingType = .none
+        field.font = .systemFont(ofSize: 13)
+        field.textColor = .labelColor
+        field.usesSingleLineMode = true
+        field.maximumNumberOfLines = 1
+        field.lineBreakMode = .byTruncatingTail
+        field.stringValue = text
+        field.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        field.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        field.setAccessibilityIdentifier("todo.editor")
+        return field
+    }
+
+    func updateNSView(_ field: AutoFocusTextField, context: Context) {
+        context.coordinator.parent = self
+        // Do not overwrite what the field editor is currently editing; only sync externally
+        // driven changes while the field is idle.
+        if field.currentEditor() == nil, field.stringValue != text {
+            field.stringValue = text
+        }
+    }
+
+    final class Coordinator: NSObject, NSTextFieldDelegate {
+        var parent: TodoTitleEditor
+        private var isCancelling = false
+
+        init(parent: TodoTitleEditor) {
+            self.parent = parent
+        }
+
+        func controlTextDidChange(_ notification: Notification) {
+            guard let field = notification.object as? NSTextField else { return }
+            if parent.text != field.stringValue {
+                parent.text = field.stringValue
+            }
+        }
+
+        func control(
+            _ control: NSControl,
+            textView: NSTextView,
+            doCommandBy commandSelector: Selector
+        ) -> Bool {
+            switch commandSelector {
+            case #selector(NSResponder.insertNewline(_:)):
+                parent.onSubmit()
+                return true
+            case #selector(NSResponder.cancelOperation(_:)):
+                isCancelling = true
+                parent.onCancel()
+                return true
+            default:
+                return false
+            }
+        }
+
+        func controlTextDidEndEditing(_ notification: Notification) {
+            if isCancelling {
+                isCancelling = false
+                return
+            }
+            // Clicking another row or leaving the panel commits instead of silently keeping a
+            // half-edited title on screen.
+            parent.onSubmit()
+        }
+    }
+}
+
+final class AutoFocusTextField: NSTextField {
+    private var didRequestFocus = false
+
+    override var intrinsicContentSize: NSSize {
+        NSSize(width: NSView.noIntrinsicMetric, height: 17)
+    }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        guard !didRequestFocus, window != nil else { return }
+        didRequestFocus = true
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let window = self.window else { return }
+            window.makeFirstResponder(self)
+            self.currentEditor()?.selectAll(nil)
+        }
     }
 }

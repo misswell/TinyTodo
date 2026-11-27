@@ -84,7 +84,6 @@ struct IOSTodoView: View {
                 .foregroundStyle(item.isCompleted ? Color.secondary : Color.primary)
                 .strikethrough(item.isCompleted, color: .secondary.opacity(0.7))
                 .onTapGesture {
-                    guard !item.isCompleted else { return }
                     editing = item
                     editTitle = item.title
                 }

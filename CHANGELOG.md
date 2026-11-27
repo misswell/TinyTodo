@@ -4,6 +4,21 @@ All notable changes to TinyTodo are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 [Semantic Versioning](https://semver.org/).
 
+## [1.4.1] — 2026-11-27
+
+### Fixed
+
+- Inline title editing now really enters edit mode. The row's editor is focused and the whole title
+  is selected as soon as it appears, so a double-click or the context-menu “编辑” action can be
+  typed into immediately instead of leaving focus in the quick-input field. Return or clicking
+  elsewhere commits; Escape cancels.
+- Completed-today rows can be edited again on Mac and iOS, while remaining completed (checkmark,
+  strikethrough and muted title are kept).
+- Added regression coverage for editor focus/selection and editing a completed item.
+- 140 unit/integration tests pass. macOS 1.4.1 (build 13); iOS 1.1.1 (build 3).
+- Notarization for 1.4.1: app `0333bb12-81b4-4a94-875e-92fec15b2237` and DMG
+  `a2048e97-d68a-4d4c-86ad-d3865e31f08e` Accepted; DMG SHA-256 `2f62d6c0…`.
+
 ## [1.4.0] — 2026-11-25
 
 ### Added

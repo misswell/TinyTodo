@@ -116,7 +116,7 @@ xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodoIOS \
 > 在模拟器构建需要先安装 iOS 平台组件（Xcode › Settings › Components，或
 > `xcodebuild -downloadPlatform iOS`）。当前仓库未提供 iOS 安装包：App Store 分发需要单独的应用记录与审核。
 >
-> iOS 端目前没有独立的测试 target：数据层是同一份 `Shared/` 源码，由 macOS 套件的 138 个测试覆盖；
+> iOS 端目前没有独立的测试 target：数据层是同一份 `Shared/` 源码，由 macOS 套件的 140 个测试覆盖；
 > 本机模拟器上 XCUITest/单元测试运行器会卡在 "test runner hung before establishing connection"，
 > 因此没有把会卡住的测试配置留在工程里。
 
@@ -131,7 +131,7 @@ xcodegen generate
 # 构建
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' build
 
-# 单元 + 集成测试（138 个）
+# 单元 + 集成测试（140 个）
 xcodebuild -project TinyTodo.xcodeproj -scheme TinyTodo -destination 'platform=macOS' test
 
 # 开发用 ad-hoc DMG
@@ -148,7 +148,7 @@ bash scripts/notarize.sh
 
 ### 测试
 
-- `TinyTodoTests`：138 个单元/集成测试，覆盖创建/批量创建/并发创建、完成与撤销、今日完成留在列表、排序、重命名、删除恢复、历史搜索与日期过滤、今日统计、WAL、重启持久化、v1→v3 迁移不丢数据、JSON 导入导出、按天分组（含夏令时）、撤销栈、视图模型流程、真实 `NSPanel` 的置顶/Spaces/透明度/帧持久化。
+- `TinyTodoTests`：140 个单元/集成测试，覆盖创建/批量创建/并发创建、完成与撤销、今日完成留在列表、排序、重命名与内联编辑器聚焦/全选、删除恢复、历史搜索与日期过滤、今日统计、WAL、重启持久化、v1→v3 迁移不丢数据、JSON 导入导出、按天分组（含夏令时）、撤销栈、视图模型流程、真实 `NSPanel` 的置顶/Spaces/透明度/帧持久化。
 - `TinyTodoUITests`：XCUITest 覆盖启动出窗、输入创建、勾选完成进入历史、历史页、设置窗口、以及「自动化窗口落在非主屏」。UI-test 模式下 `TestScreenPolicy` 会把面板和设置窗口放到非主显示器，避免占用用户正在工作的屏幕。XCUITest 需要给测试运行器授予「辅助功能/自动化」权限（系统设置 › 隐私与安全性 › 辅助功能）；CI 只编译该测试包（GitHub 托管 runner 无登录 GUI 会话）。
 - GitHub Actions：`.github/workflows/build.yml` 在 `macos-latest` 上构建 Release、跑测试、打出 DMG 并上传 artifact。
 
@@ -236,7 +236,7 @@ project builds offline and CI needs no package downloads.
 
 ### Testing
 
-138 unit/integration tests cover the repository, migrations (including a v1 database upgrade that
+140 unit/integration tests cover the repository, migrations (including a v1 database upgrade that
 keeps history rows), JSON import/export, day grouping (DST included), undo, view-model flows and the
 real panel's level, Spaces behavior, opacity and frame persistence. XCUITest covers launch, create,
 complete, history, settings, and that the automation window lands on a non-main display. UI tests need
